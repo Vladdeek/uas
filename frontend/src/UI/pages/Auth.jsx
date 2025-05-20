@@ -25,6 +25,8 @@ const Auth = () => {
 	const [nameUser, setNameUser] = useState('')
 	const [surname, setSurname] = useState('')
 	const [patronymic, setPatronymic] = useState('')
+	const [birthDate, setBirthDate] = useState(['', '', ''])
+	const [gender, setGender] = useState('')
 
 	useEffect(() => {
 		if (isLogin === true) {
@@ -43,6 +45,31 @@ const Auth = () => {
 			}
 		}
 	}, [phone, code, email, password, username, nameUser, patronymic, surname])
+
+	const handleLoginData = () => {
+		console.log(
+			`Успешная авторизация\n` + `Почта: ${email}\n` + `Пароль: ${password}`
+		)
+	}
+	const handleRegData = () => {
+		const { day, month, year } = birthDate
+
+		console.log(
+			`Успешная регистрация\n` +
+				`Номер телефона: ${phone}\n` +
+				`Код: ${code}\n` +
+				`Почта: ${email}\n` +
+				`Имя пользователя: ${username}\n` +
+				`Пароль: ${password}\n` +
+				`Фамилия: ${surname}\n` +
+				`Имя: ${nameUser}\n` +
+				`Отчество: ${patronymic}\n` +
+				`Дата рождения: ${String(day).padStart(2, '0')}.${String(
+					month + 1
+				).padStart(2, '0')}.${year}\n` +
+				`Пол: ${gender}`
+		)
+	}
 
 	return (
 		<div className='relative w-full h-screen flex items-center justify-center overflow-hidden'>
@@ -75,7 +102,11 @@ const Auth = () => {
 							value={password}
 							onChange={e => setPassword(e.target.value)}
 						/>
-						<Submit placeholder='Войти' disable={login} />
+						<Submit
+							placeholder='Войти'
+							disable={login}
+							onClick={handleLoginData}
+						/>
 						<AuthToggleText
 							text='Еще нет учетной записи?'
 							linkText='Регистрация'
@@ -192,12 +223,17 @@ const Auth = () => {
 									/>
 								</div>
 
-								<DateInput icon_path={'calendar-days.svg'} />
+								<DateInput onChange={setBirthDate} />
 								<SelectInput
 									placeholder='Пол'
 									optionsMass={['Мужской', 'Женский']}
+									onChange={setGender}
 								/>
-								<Submit placeholder='Подтвердить' disable={register} />
+								<Submit
+									placeholder='Подтвердить'
+									disable={register}
+									onClick={handleRegData}
+								/>
 							</>
 						)}
 					</div>

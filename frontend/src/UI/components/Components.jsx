@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 const PhoneNumInput = ({ value, onChange }) => {
 	const formatPhone = input => {
@@ -85,7 +85,7 @@ const Input = ({
 	)
 }
 
-const DateInput = () => {
+const DateInput = ({ onChange }) => {
 	const months = [
 		'Январь',
 		'Февраль',
@@ -101,6 +101,22 @@ const DateInput = () => {
 		'Декабрь',
 	]
 
+	const [dayStr, setDayStr] = useState('')
+	const [month, setMonth] = useState(0)
+	const [yearStr, setYearStr] = useState('')
+
+	// Автоматически преобразуем строки в числа, если это возможно
+	useEffect(() => {
+		const day = parseInt(dayStr)
+		const year = parseInt(yearStr)
+
+		onChange?.({
+			day: !isNaN(day) ? day : null,
+			month,
+			year: !isNaN(year) ? year : null,
+		})
+	}, [dayStr, month, yearStr])
+
 	return (
 		<div className='flex flex-col'>
 			<p className='ml-3 text-lg'>Дата рождения</p>
@@ -109,16 +125,19 @@ const DateInput = () => {
 					placeholder='дд'
 					maxLength={2}
 					type='text'
+					value={dayStr}
+					onChange={e => setDayStr(e.target.value.replace(/\D/g, ''))} // только цифры
 					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-3 border-[#00000010] w-full'
 				/>
 
 				<select
-					name='month'
+					value={month}
+					onChange={e => setMonth(Number(e.target.value))}
 					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-3 border-[#00000010]'
 				>
-					{months.map((month, index) => (
-						<option key={index} value={month}>
-							{month}
+					{months.map((name, index) => (
+						<option key={index} value={index}>
+							{name}
 						</option>
 					))}
 				</select>
@@ -127,18 +146,28 @@ const DateInput = () => {
 					placeholder='гггг'
 					maxLength={4}
 					type='text'
+					value={yearStr}
+					onChange={e => setYearStr(e.target.value.replace(/\D/g, ''))} // только цифры
 					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-3 border-[#00000010] w-full'
 				/>
 			</div>
 		</div>
 	)
 }
-const SelectInput = ({ placeholder, optionsMass }) => {
+
+const SelectInput = ({ placeholder, optionsMass, onChange }) => {
+	const [value, setValue] = useState(optionsMass[0])
+
+	useEffect(() => {
+		onChange?.(value)
+	}, [value])
+
 	return (
 		<div className='flex flex-col w-full'>
 			<p className='ml-3 text-lg'>{placeholder}</p>
 			<select
-				name='select'
+				value={value}
+				onChange={e => setValue(e.target.value)}
 				className='text-center text-2xl flex-1 px-1 py-2 outline-none border-b-3 border-[#00000010]'
 			>
 				{optionsMass.map((option, index) => (
@@ -152,6 +181,13 @@ const SelectInput = ({ placeholder, optionsMass }) => {
 }
 
 const Submit = ({ placeholder, disable, onClick }) => {
+	const handleClick = e => {
+		e.preventDefault() // предотврати отправку формы и перезагрузку
+		if (!disable && onClick) {
+			onClick()
+		}
+	}
+
 	return (
 		<input
 			className={`text-white text-2xl font-semibold rounded-2xl  ${
@@ -160,7 +196,7 @@ const Submit = ({ placeholder, disable, onClick }) => {
 			type='submit'
 			value={placeholder}
 			disabled={disable}
-			onClick={onClick}
+			onClick={handleClick} // теперь безопасно
 		/>
 	)
 }
