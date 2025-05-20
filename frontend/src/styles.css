@@ -1,0 +1,99 @@
+@import 'tailwindcss';
+body {
+	background-color: #fefefe;
+}
+.square {
+	position: relative;
+	margin: 0 10px;
+	width: 575px;
+	height: 575px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.square span:nth-child(1) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 90%;
+	height: 90%;
+	background-color: #820000;
+	border-radius: 31% 45% 74% 35% / 38% 56% 51% 87%;
+	transition: 0.5s;
+	animation: anim1 20s linear infinite;
+	filter: brightness(1.25);
+}
+
+.square span:nth-child(2) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	margin: 2.5%;
+	background-color: #820000;
+	border-radius: 25% 51% 73% 36% / 42% 59% 64% 83%;
+	transition: 0.5s;
+	animation: anim2 12s linear infinite;
+}
+
+.square span:nth-child(3) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 95%;
+	height: 95%;
+	border: 3px solid #820000;
+	border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+	transition: 0.5s;
+	animation: anim3 8s linear infinite;
+	filter: brightness(2);
+}
+
+@keyframes anim1 {
+	0% {
+		transform: rotate(0deg);
+		border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+	}
+
+	50% {
+		transform: rotate(180deg);
+		border-radius: 70% 74% 49% 40% / 21% 56% 58% 79%;
+	}
+
+	100% {
+		transform: rotate(360deg);
+		border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+	}
+}
+
+@keyframes anim2 {
+	0% {
+		transform: rotate(360deg);
+		border-radius: 31% 45% 74% 35% / 38% 56% 51% 87%;
+	}
+	50% {
+		transform: rotate(180deg);
+		border-radius: 70% 48% 59% 67% / 20% 22% 49% 61%;
+	}
+	100% {
+		transform: rotate(0deg);
+		border-radius: 31% 45% 74% 35% / 38% 56% 51% 87%;
+	}
+}
+
+@keyframes anim3 {
+	0% {
+		transform: rotate(0deg);
+		border-radius: 25% 51% 73% 36% / 42% 59% 64% 83%;
+	}
+	50% {
+		transform: rotate(180deg);
+		border-radius: 64% 21% 49% 29% / 63% 35% 66% 62%;
+	}
+	100% {
+		transform: rotate(360deg);
+		border-radius: 25% 51% 73% 36% / 42% 59% 64% 83%;
+	}
+}
