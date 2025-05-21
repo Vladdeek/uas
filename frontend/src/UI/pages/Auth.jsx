@@ -33,8 +33,7 @@ const Auth = () => {
 			setLogin(!(email.trim() && password.trim()))
 		} else {
 			if (RegStep === 1) {
-				const digits = phone.replace(/\D/g, '')
-				setRegister(digits.length < 11)
+				setRegister(!email.trim())
 			} else if (RegStep === 2) {
 				const filled = code.every(digit => digit !== '')
 				setRegister(!filled)
@@ -120,7 +119,14 @@ const Auth = () => {
 						</p>
 						{RegStep === 1 ? (
 							<>
-								<PhoneNumInput value={phone} onChange={setPhone} />
+								<Input
+									type='email'
+									placeholder='example@email.com'
+									icon_path='mail.svg'
+									icon={true}
+									value={email}
+									onChange={e => setEmail(e.target.value)}
+								/>
 								<Submit
 									placeholder='Продолжить'
 									disable={register}
@@ -138,8 +144,8 @@ const Auth = () => {
 						) : RegStep === 2 ? (
 							<>
 								<p className='text-center text-xl'>
-									Введите код из СМС. Мы отправили его на указанный номер
-									телефона.
+									Введите код из письма. Мы отправили его на указанный вами
+									электронный адрес.
 								</p>
 
 								<Push code={code} setCode={setCode} />
@@ -169,14 +175,7 @@ const Auth = () => {
 									value={username}
 									onChange={e => setUsername(e.target.value)}
 								/>
-								<Input
-									type='email'
-									placeholder='example@email.com'
-									icon_path='mail.svg'
-									icon={true}
-									value={email}
-									onChange={e => setEmail(e.target.value)}
-								/>
+
 								<Input
 									type='password'
 									placeholder='Пароль'

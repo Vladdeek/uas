@@ -36,14 +36,14 @@ const PhoneNumInput = ({ value, onChange }) => {
 
 	return (
 		<div className='border-b-3 border-[#00000010] flex w-full gap-5 p-2'>
-			<img className='opacity-15 text-red' src='icons/phone.svg' alt='' />
+			<img className='opacity-15 text-red p-1' src='icons/phone.svg' alt='' />
 			<input
 				type='tel'
 				placeholder='+7 (990) 000-00-00'
 				maxLength={18}
 				value={value}
 				onChange={handleChange}
-				className='w-full text-3xl font-semibold opacity-50 outline-none'
+				className='w-full text-2xl font-normal opacity-50 outline-none'
 			/>
 		</div>
 	)
@@ -63,7 +63,7 @@ const Input = ({
 			<div className='flex border-b-3 border-[#00000010] w-full h-15 p-2 gap-2'>
 				{icon && (
 					<img
-						className='opacity-15 text-red'
+						className='opacity-15 text-red p-1'
 						src={`icons/${icon_path}`}
 						alt=''
 					/>
@@ -71,7 +71,7 @@ const Input = ({
 				<input
 					type={type}
 					placeholder={placeholder}
-					className='text-2xl font-semibold opacity-50 outline-none'
+					className='text-2xl font-normal opacity-50 outline-none'
 					value={value}
 					onChange={onChange}
 				/>
