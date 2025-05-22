@@ -49,6 +49,7 @@ const Auth = () => {
 		console.log(
 			`Успешная авторизация\n` + `Почта: ${email}\n` + `Пароль: ${password}`
 		)
+		navigate('/')
 	}
 	const handleRegData = () => {
 		const { day, month, year } = birthDate
@@ -68,6 +69,7 @@ const Auth = () => {
 				).padStart(2, '0')}.${year}\n` +
 				`Пол: ${gender}`
 		)
+		navigate('/')
 	}
 
 	return (

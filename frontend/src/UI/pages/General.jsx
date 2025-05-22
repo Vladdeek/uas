@@ -7,8 +7,10 @@ import { useState } from 'react'
 import Profile from './chapters/Profile'
 import Applications from './chapters/Applications'
 import Report from './chapters/Report'
+import { useNavigate } from 'react-router-dom'
 
 const General = () => {
+	const navigate = useNavigate()
 	const [activeIndex, setActiveIndex] = useState(0)
 	const FullName = ['Рязанов', 'Владислав', 'Денисович']
 	const colors = [
@@ -181,6 +183,12 @@ const General = () => {
 						onClick={() => setActiveIndex(8)}
 					/>
 				)}
+				<SBChapter
+					icon_name='log-out.svg'
+					chapter_name='Выйти'
+					isActive={activeIndex === 9}
+					onClick={() => navigate('/auth')}
+				/>
 			</Sidebar>
 
 			<main className='ml-96 p-4'>{renderContent()}</main>
