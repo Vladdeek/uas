@@ -9,6 +9,7 @@ import Applications from './chapters/Applications'
 import Report from './chapters/Report'
 import { useNavigate } from 'react-router-dom'
 import CheckRole from '../components/CheckRole'
+import ReportConstructor from './chapters/ReportConstructor'
 
 const General = () => {
 	const navigate = useNavigate()
@@ -62,7 +63,17 @@ const General = () => {
 			case 1:
 				return <Applications />
 			case 2:
-				return <Report chap={'Конструктор отчета'} />
+				return hasRole(['Админ']) ? (
+					<ReportConstructor />
+				) : (
+					<div className='h-screen w-full flex items-center justify-center text-3xl'>
+						<div className='flex gap-2 items-center'>
+							<p className='pb-1'>Доступ запрещен</p>
+							<img className='h-full' src='icons/ban.svg' alt='' />
+						</div>
+					</div>
+				)
+
 			case 3:
 				return <div>Расписание</div>
 			case 4:
@@ -92,6 +103,9 @@ const General = () => {
 				role={userRoles.join(', ')}
 				img_path={avatar}
 			>
+				{hasRole(['Админ']) && (
+					<p className='text-white font-bold text-md'>Основные</p>
+				)}
 				<SBChapter
 					icon_name='user.svg'
 					chapter_name='Профиль'
@@ -107,60 +121,57 @@ const General = () => {
 							isActive={activeIndex === 1}
 							onClick={() => setActiveIndex(1)}
 						/>
-						<AccordSBChapter icon_name='file-text.svg' chapter_name='Отчеты'>
-							{hasRole(['Админ']) && (
-								<InSBChapter
-									icon_name='clipboard-check.svg'
-									chapter_name='Конструктор отчета'
-									isActive={activeIndex === 2}
-									onClick={() => setActiveIndex(2)}
-								/>
-							)}
-
-							<InSBChapter
-								icon_name='clipboard-check.svg'
-								chapter_name='Все отчеты'
-								isActive={activeIndex === 7}
-								onClick={() => setActiveIndex(7)}
-							/>
-						</AccordSBChapter>
+						<SBChapter
+							icon_name='file-text.svg'
+							chapter_name='Отчеты'
+							isActive={activeIndex === 7}
+							onClick={() => setActiveIndex(7)}
+						/>
 					</>
 				)}
 
 				{hasRole(['Студент', 'Преподаватель']) && (
-					<SBChapter
-						icon_name='calendar-days.svg'
-						chapter_name='Расписание'
-						isActive={activeIndex === 3}
-						onClick={() => setActiveIndex(3)}
-					/>
+					<>
+						<SBChapter
+							icon_name='calendar-days.svg'
+							chapter_name='Расписание'
+							isActive={activeIndex === 3}
+							onClick={() => setActiveIndex(3)}
+						/>
+					</>
 				)}
 
 				{hasRole(['Студент']) && (
-					<SBChapter
-						icon_name='book-open-text.svg'
-						chapter_name='Учебный план'
-						isActive={activeIndex === 4}
-						onClick={() => setActiveIndex(4)}
-					/>
+					<>
+						<SBChapter
+							icon_name='book-open-text.svg'
+							chapter_name='Учебный план'
+							isActive={activeIndex === 4}
+							onClick={() => setActiveIndex(4)}
+						/>
+					</>
 				)}
 
 				{hasRole(['Преподаватель']) && (
-					<SBChapter
-						icon_name='file-chart-column.svg'
-						chapter_name='Нагрузка'
-						isActive={activeIndex === 5}
-						onClick={() => setActiveIndex(5)}
-					/>
+					<>
+						<SBChapter
+							icon_name='file-chart-column.svg'
+							chapter_name='Нагрузка'
+							isActive={activeIndex === 5}
+							onClick={() => setActiveIndex(5)}
+						/>
+					</>
 				)}
 
 				{hasRole(['Абитуриент']) && (
-					<SBChapter
-						icon_name='graduation-cap.svg'
-						chapter_name='Поступление'
-						isActive={activeIndex === 5}
-						onClick={() => setActiveIndex(5)}
-					/>
+					<>
+						<SBChapter
+							icon_name='graduation-cap.svg'
+							chapter_name='Поступление'
+							isActive={activeIndex === 5}
+							onClick={() => setActiveIndex(5)}
+						/>
+					</>
 				)}
 
 				{userRoles.length > 0 && (
@@ -173,13 +184,17 @@ const General = () => {
 				)}
 
 				{hasRole(['Админ']) && (
-					<SBChapter
-						icon_name='shield-user.svg'
-						chapter_name='Панель администратора'
-						isActive={activeIndex === 8}
-						onClick={() => setActiveIndex(8)}
-					/>
+					<>
+						<p className='text-white font-bold text-md'>Администратор</p>
+						<SBChapter
+							icon_name='file-text.svg'
+							chapter_name='Конструктор отчетов'
+							isActive={activeIndex === 2}
+							onClick={() => setActiveIndex(2)}
+						/>
+					</>
 				)}
+
 				<SBChapter
 					icon_name='log-out.svg'
 					chapter_name='Выйти'
