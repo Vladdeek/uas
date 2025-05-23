@@ -8,6 +8,7 @@ import Profile from './chapters/Profile'
 import Applications from './chapters/Applications'
 import Report from './chapters/Report'
 import { useNavigate } from 'react-router-dom'
+import CheckRole from '../components/CheckRole'
 
 const General = () => {
 	const navigate = useNavigate()
@@ -28,7 +29,6 @@ const General = () => {
 		'+'
 	)}&background=${colors[0]}&color=fff`
 
-	// Все возможные роли
 	const allRoles = [
 		'Сотрудник',
 		'Студент',
@@ -38,9 +38,8 @@ const General = () => {
 		'Админ',
 	]
 
-	const userRoles = [allRoles[0], allRoles[4], allRoles[5]]
+	const [userRoles, setUserRoles] = useState([])
 
-	// Функция проверки ролей
 	const hasRole = requiredRoles => {
 		return requiredRoles.some(role => userRoles.includes(role))
 	}
@@ -83,6 +82,11 @@ const General = () => {
 
 	return (
 		<>
+			<CheckRole
+				userRoles={userRoles}
+				allRoles={allRoles}
+				setUserRoles={setUserRoles}
+			/>
 			<Sidebar
 				username={FullName}
 				role={userRoles.join(', ')}
@@ -95,7 +99,6 @@ const General = () => {
 					onClick={() => setActiveIndex(0)}
 				/>
 
-				{/* Заявки и Отчеты (для сотрудника) */}
 				{hasRole(['Сотрудник']) && (
 					<>
 						<SBChapter
@@ -124,7 +127,6 @@ const General = () => {
 					</>
 				)}
 
-				{/* Расписание (для студента или преподавателя) */}
 				{hasRole(['Студент', 'Преподаватель']) && (
 					<SBChapter
 						icon_name='calendar-days.svg'
@@ -134,7 +136,6 @@ const General = () => {
 					/>
 				)}
 
-				{/* Учебный план (только для студента) */}
 				{hasRole(['Студент']) && (
 					<SBChapter
 						icon_name='book-open-text.svg'
@@ -144,7 +145,6 @@ const General = () => {
 					/>
 				)}
 
-				{/* Нагрузка (только для преподавателя) */}
 				{hasRole(['Преподаватель']) && (
 					<SBChapter
 						icon_name='file-chart-column.svg'
@@ -154,7 +154,6 @@ const General = () => {
 					/>
 				)}
 
-				{/* Поступление (только для абитуриента) */}
 				{hasRole(['Абитуриент']) && (
 					<SBChapter
 						icon_name='graduation-cap.svg'
@@ -164,7 +163,6 @@ const General = () => {
 					/>
 				)}
 
-				{/* Новости (для всех, у кого есть хотя бы одна роль) */}
 				{userRoles.length > 0 && (
 					<SBChapter
 						icon_name='newspaper.svg'
@@ -174,7 +172,6 @@ const General = () => {
 					/>
 				)}
 
-				{/* Поступление (только для абитуриента) */}
 				{hasRole(['Админ']) && (
 					<SBChapter
 						icon_name='shield-user.svg'
