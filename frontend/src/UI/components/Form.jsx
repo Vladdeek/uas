@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 
-const ReportForm = ({
+const Form = ({
 	form_count_inputs,
 	form_create,
 	form_description,
@@ -105,4 +105,4 @@ const ReportForm = ({
 	)
 }
 
-export default ReportForm
+export default Form

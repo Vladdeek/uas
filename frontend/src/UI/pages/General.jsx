@@ -9,7 +9,9 @@ import Applications from './chapters/Applications'
 import Report from './chapters/Report'
 import { useNavigate } from 'react-router-dom'
 import CheckRole from '../components/CheckRole'
-import ReportConstructor from './chapters/ReportConstructor'
+import Constructor from './chapters/Constructor'
+import New from './New'
+import Form from '../components/Form'
 
 const General = () => {
 	const navigate = useNavigate()
@@ -64,7 +66,46 @@ const General = () => {
 				return <Applications />
 			case 2:
 				return hasRole(['Админ']) ? (
-					<ReportConstructor />
+					<Constructor
+						onClick={() => setActiveIndex(9)}
+						ConstBtn={'Новый отчёт'}
+						ConstName={'отчётов'}
+					>
+						<Form
+							form_count_inputs={'N'}
+							form_name={'Название отчета'}
+							form_description={'Короткое описание отчета'}
+							form_role={'Подразделение'}
+							form_status={'Статус'}
+							form_create={'ДД.ММ.ГГГГ'}
+						/>
+						<Form
+							form_count_inputs={3}
+							form_name={'Финансовый отчет за Q1 2024'}
+							form_description={'Основные показатели прибыли и убытков'}
+							form_role={'Финансовый отдел'}
+							form_status={'Статус'}
+							form_create={'15.03.2024'}
+						/>
+
+						<Form
+							form_count_inputs={7}
+							form_name={'Анализ продаж по регионам'}
+							form_description={'Сравнение эффективности региональных отделов'}
+							form_role={'Отдел продаж'}
+							form_status={'Статус'}
+							form_create={'10.02.2023'}
+						/>
+
+						<Form
+							form_count_inputs={2}
+							form_name={'Отчет по кадровым изменениям'}
+							form_description={'Нанятые и уволенные сотрудники за месяц'}
+							form_role={'HR-отдел'}
+							form_status={'Статус'}
+							form_create={'05.05.2024'}
+						/>
+					</Constructor>
 				) : (
 					<div className='h-screen w-full flex items-center justify-center text-3xl'>
 						<div className='flex gap-2 items-center'>
@@ -86,6 +127,45 @@ const General = () => {
 				return <Report chap={'Все отчеты'} />
 			case 8:
 				return <div>Панель</div>
+			case 9:
+				return <New NewName={'новый отчет'} />
+			case 10:
+				return hasRole(['Админ']) ? (
+					<Constructor
+						onClick={() => setActiveIndex(11)}
+						ConstBtn={'Новая заявка'}
+						ConstName={'заявок'}
+					>
+						<Form
+							form_count_inputs={5}
+							form_name={'Маркетинговый отчет: эффективность кампаний'}
+							form_description={'CTR, конверсии и ROI рекламных каналов'}
+							form_role={'Маркетинг'}
+							form_status={'Статус'}
+							form_create={'22.04.2024'}
+						/>
+
+						<Form
+							form_count_inputs={4}
+							form_name={'Технический аудит серверов'}
+							form_description={
+								'Загрузка CPU, память, инциденты за последний месяц'
+							}
+							form_role={'IT-инфраструктура'}
+							form_status={'Статус'}
+							form_create={'30.12.2023'}
+						/>
+					</Constructor>
+				) : (
+					<div className='h-screen w-full flex items-center justify-center text-3xl'>
+						<div className='flex gap-2 items-center'>
+							<p className='pb-1'>Доступ запрещен</p>
+							<img className='h-full' src='icons/ban.svg' alt='' />
+						</div>
+					</div>
+				)
+			case 11:
+				return <New NewName={'новая заявка'} />
 			default:
 				return null
 		}
@@ -187,9 +267,15 @@ const General = () => {
 					<>
 						<p className='text-white font-bold text-md'>Администратор</p>
 						<SBChapter
+							icon_name='clipboard-check.svg'
+							chapter_name='Конструктор заявок'
+							isActive={activeIndex === 10 || activeIndex === 11}
+							onClick={() => setActiveIndex(10)}
+						/>
+						<SBChapter
 							icon_name='file-text.svg'
 							chapter_name='Конструктор отчетов'
-							isActive={activeIndex === 2}
+							isActive={activeIndex === 2 || activeIndex === 9}
 							onClick={() => setActiveIndex(2)}
 						/>
 					</>
@@ -198,7 +284,7 @@ const General = () => {
 				<SBChapter
 					icon_name='log-out.svg'
 					chapter_name='Выйти'
-					isActive={activeIndex === 9}
+					isActive={activeIndex === 100}
 					onClick={() => navigate('/auth')}
 				/>
 			</Sidebar>
