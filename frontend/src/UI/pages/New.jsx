@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { SelectInput, Input, Submit } from '../components/Components'
 
-const New = ({ type }) => {
+const New = ({ type, setActiveIndex, setForms }) => {
 	const [nameNewForm, setNameNewForm] = useState('')
 	const [descriptionNewForm, setDescriptionNewForm] = useState('')
 	const [responsible, setResponsible] = useState('')
@@ -60,6 +60,45 @@ const New = ({ type }) => {
 	useEffect(() => {
 		setEnabled(!fieldName.trim())
 	}, [fieldName])
+
+	const handleSaveForm = () => {
+		if (!nameNewForm.trim()) {
+			alert('Введите название формы')
+			return
+		}
+
+		const newForm = {
+			id: Date.now(),
+			type, // 'заявка' или 'отчёты'
+			name: nameNewForm,
+			description: descriptionNewForm,
+			responsible,
+			period,
+			fields: previewFields,
+		}
+
+		// Сохраняем в localStorage
+		const storedForms = JSON.parse(localStorage.getItem('forms')) || []
+		const updatedForms = [...storedForms, newForm]
+		localStorage.setItem('forms', JSON.stringify(updatedForms))
+
+		// Обновляем стейт с формами (предположим, у вас есть setForms)
+		setForms(updatedForms)
+
+		// Переход на нужный экран
+		if (type === 'отчёты') {
+			setActiveIndex(2) // case 2: Constructor для отчетов
+		} else {
+			setActiveIndex(10) // case 10: Constructor для заявок
+		}
+
+		// Очистка полей формы
+		setNameNewForm('')
+		setDescriptionNewForm('')
+		setResponsible('')
+		setPeriod('')
+		setPreviewFields([])
+	}
 
 	return (
 		<div className='w-full'>
@@ -256,6 +295,7 @@ const New = ({ type }) => {
 						</div>
 					))}
 				</div>
+				<Submit onClick={handleSaveForm} placeholder={'Сохранить'} />
 			</div>
 		</div>
 	)

@@ -3,7 +3,7 @@ import SBChapter, {
 	InSBChapter,
 } from '../components/SBChapter'
 import Sidebar from '../components/SideBar'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Profile from './chapters/Profile'
 import Applications from './chapters/Applications'
 import Report from './chapters/Report'
@@ -41,6 +41,23 @@ const General = () => {
 	]
 
 	const [userRoles, setUserRoles] = useState([])
+	const [forms, setForms] = useState(() => {
+		// Инициализация из localStorage или пустой массив
+		const saved = localStorage.getItem('forms')
+		return saved ? JSON.parse(saved) : []
+	})
+	useEffect(() => {
+		const storedForms = JSON.parse(localStorage.getItem('forms')) || []
+		setForms(storedForms)
+	}, [activeIndex]) // обновляется при переходе на case 2 или 10
+
+	const handleDeleteForm = id => {
+		// Удаляем из localStorage
+		const newForms = forms.filter(f => f.id !== id)
+		localStorage.setItem('forms', JSON.stringify(newForms))
+		// Обновляем состояние, чтобы перерендерить UI
+		setForms(newForms)
+	}
 
 	const hasRole = requiredRoles => {
 		return requiredRoles.some(role => userRoles.includes(role))
@@ -69,19 +86,32 @@ const General = () => {
 						onClick={() => setActiveIndex(9)}
 						ConstBtn={'Новый отчёт'}
 						ConstName={'отчётов'}
+						type={forms.length === 0}
 					>
-						<Form
-							form_count_inputs={'N'}
-							form_name={'Название отчета'}
-							form_description={'Короткое описание отчета'}
-							form_role={'Подразделение'}
-							form_status={'Статус'}
-							form_create={'ДД.ММ.ГГГГ'}
-						/>
+						{forms.length === 0 && (
+							<div className='h-30 w-full flex items-center justify-center text-3xl select-none cursor-default'>
+								<div className='flex gap-2 items-center'>
+									<p className='pb-1 opacity-30'>Пусто</p>
+								</div>
+							</div>
+						)}
+						{forms.map(form => (
+							<Form
+								key={form.id}
+								form_id={form.id}
+								form_name={form.name}
+								form_description={form.description}
+								form_role={form.responsible}
+								form_count_inputs={form.fields.length}
+								form_create={form.period}
+								form_status={form.type}
+								onDelete={handleDeleteForm} // передаём callback
+							/>
+						))}
 					</Constructor>
 				) : (
-					<div className='h-screen w-full flex items-center justify-center text-3xl'>
-						<div className='flex gap-2 items-center'>
+					<div className='h-screen w-full flex items-center justify-center text-3xl select-none cursor-default'>
+						<div className='flex gap-2 items-center '>
 							<p className='pb-1'>Доступ запрещен</p>
 							<img className='h-full' src='icons/ban.svg' alt='' />
 						</div>
@@ -102,10 +132,14 @@ const General = () => {
 				return <div>Панель</div>
 			case 9:
 				return hasRole(['Админ']) ? (
-					<New type={'отчеты'} />
+					<New
+						type={'отчеты'}
+						setActiveIndex={setActiveIndex}
+						setForms={setForms}
+					/>
 				) : (
-					<div className='h-screen w-full flex items-center justify-center text-3xl'>
-						<div className='flex gap-2 items-center'>
+					<div className='h-screen w-full flex items-center justify-center text-3xl select-none cursor-default'>
+						<div className='flex gap-2 items-center '>
 							<p className='pb-1'>Доступ запрещен</p>
 							<img className='h-full' src='icons/ban.svg' alt='' />
 						</div>
@@ -117,15 +151,28 @@ const General = () => {
 						onClick={() => setActiveIndex(11)}
 						ConstBtn={'Новая заявка'}
 						ConstName={'заявок'}
+						type={forms.length === 0}
 					>
-						<Form
-							form_count_inputs={'N'}
-							form_name={'Название заявки'}
-							form_description={'Короткое описание заявки'}
-							form_role={'Подразделение'}
-							form_status={'Статус'}
-							form_create={'ДД.ММ.ГГГГ'}
-						/>
+						{forms.length === 0 && (
+							<div className='h-30 w-full flex items-center justify-center text-3xl select-none cursor-default'>
+								<div className='flex gap-2 items-center'>
+									<p className='pb-1 opacity-30'>Пусто</p>
+								</div>
+							</div>
+						)}
+						{forms.map(form => (
+							<Form
+								key={form.id}
+								form_id={form.id}
+								form_name={form.name}
+								form_description={form.description}
+								form_role={form.responsible}
+								form_count_inputs={form.fields.length}
+								form_create={form.period}
+								form_status={form.type}
+								onDelete={handleDeleteForm} // передаём callback
+							/>
+						))}
 					</Constructor>
 				) : (
 					<div className='h-screen w-full flex items-center justify-center text-3xl'>
@@ -137,7 +184,11 @@ const General = () => {
 				)
 			case 11:
 				return hasRole(['Админ']) ? (
-					<New type={'заявки'} />
+					<New
+						type={'заявки'}
+						setActiveIndex={setActiveIndex}
+						setForms={setForms}
+					/>
 				) : (
 					<div className='h-screen w-full flex items-center justify-center text-3xl'>
 						<div className='flex gap-2 items-center'>

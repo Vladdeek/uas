@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
 
 const Form = ({
+	form_id,
 	form_count_inputs,
 	form_create,
 	form_description,
 	form_name,
 	form_role,
 	form_status,
+	onDelete,
 }) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const menuRef = useRef(null)
@@ -21,7 +23,7 @@ const Form = ({
 	}
 
 	const handleDelete = () => {
-		console.log('Удалить')
+		onDelete(form_id)
 		setIsMenuOpen(false)
 	}
 

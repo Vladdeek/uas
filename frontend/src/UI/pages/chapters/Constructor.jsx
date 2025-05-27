@@ -1,6 +1,6 @@
 import { Children } from 'react'
 
-const Constructor = ({ onClick, ConstName, ConstBtn, children }) => {
+const Constructor = ({ onClick, ConstName, ConstBtn, children, type }) => {
 	return (
 		<>
 			<div className=' items-center w-full'>
@@ -19,7 +19,9 @@ const Constructor = ({ onClick, ConstName, ConstBtn, children }) => {
 					</button>
 				</div>
 
-				<div className='grid grid-cols-4 gap-10'>{children}</div>
+				<div className={` ${!type ? 'grid grid-cols-4 gap-10' : 'w-full'}`}>
+					{children}
+				</div>
 			</div>
 		</>
 	)
