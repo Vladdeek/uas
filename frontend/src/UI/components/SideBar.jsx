@@ -19,7 +19,7 @@ const Sidebar = ({ children, username, role, img_path }) => {
 
 				<ul class='space-y-2 font-medium'>{children}</ul>
 				<p className='mb-1 ml-2 mt-auto text-white font-semibold'>
-					Версия 0.0.1.3
+					Версия 0.0.1.4
 				</p>
 			</div>
 		</aside>

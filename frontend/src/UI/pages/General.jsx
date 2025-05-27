@@ -8,73 +8,123 @@ import Profile from './chapters/Profile'
 import Applications from './chapters/Applications'
 import Report from './chapters/Report'
 import { useNavigate } from 'react-router-dom'
-import CheckRole from '../components/CheckRole'
 import Constructor from './chapters/Constructor'
 import New from './New'
 import Form from '../components/Form'
+import Structure from './chapters/Structure.jsx'
+import ApiClient from '../../api/api.js'
 
 const General = () => {
 	const navigate = useNavigate()
 	const [activeIndex, setActiveIndex] = useState(0)
-	const FullName = ['Рязанов', 'Владислав', 'Денисович']
-	const colors = [
-		'f5b7b1',
-		'e8daef',
-		'aed6f1',
-		'a2d9ce',
-		'abebc6',
-		'f9e79f',
-		'fad7a0',
-		'edbb99',
-		'',
-	]
-	const avatar = `https://ui-avatars.com/api/?name=${FullName.slice(0, 2).join(
-		'+'
-	)}&background=${colors[0]}&color=fff`
-
-	const allRoles = [
-		'Сотрудник',
-		'Студент',
-		'Школьник',
-		'Преподаватель',
-		'Админ',
-	]
-
+	const [userData, setUserData] = useState(null)
 	const [userRoles, setUserRoles] = useState([])
-	const [forms, setForms] = useState(() => {
-		// Инициализация из localStorage или пустой массив
-		const saved = localStorage.getItem('forms')
-		return saved ? JSON.parse(saved) : []
-	})
-	useEffect(() => {
-		const storedForms = JSON.parse(localStorage.getItem('forms')) || []
-		setForms(storedForms)
-	}, [activeIndex]) // обновляется при переходе на case 2 или 10
+	const [forms, setForms] = useState([])
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState('')
 
-	const handleDeleteForm = id => {
-		// Удаляем из localStorage
-		const newForms = forms.filter(f => f.id !== id)
-		localStorage.setItem('forms', JSON.stringify(newForms))
-		// Обновляем состояние, чтобы перерендерить UI
-		setForms(newForms)
+	// проверяем авторизацию при загрузке
+	useEffect(() => {
+		if (!ApiClient.isAuthenticated()) {
+			navigate('/auth')
+			return
+		}
+
+		loadUserData()
+		loadForms()
+	}, [])
+
+	const loadUserData = async () => {
+		try {
+			const profile = await ApiClient.getUserProfile()
+			setUserData(profile)
+			setUserRoles(profile.roles || [])
+		} catch (error) {
+			console.error('Ошибка загрузки профиля:', error)
+			// если токен невалидный, перенаправляем на авторизацию
+			if (error.message.includes('401') || error.message.includes('токен')) {
+				await ApiClient.logout()
+				navigate('/auth')
+			}
+		} finally {
+			setLoading(false)
+		}
 	}
 
-	const hasRole = requiredRoles => {
+	const loadForms = async () => {
+		try {
+			const formsData = await ApiClient.getForms()
+			setForms(formsData)
+		} catch (error) {
+			console.error('Ошибка загрузки форм:', error)
+			// если нет прав доступа - не показываем ошибку
+			if (!error.message.includes('Недостаточно прав')) {
+				setError('Ошибка загрузки данных')
+			}
+		}
+	}
+
+	// обновляем формы при смене активного индекса
+	useEffect(() => {
+		if (activeIndex === 2 || activeIndex === 10) {
+			loadForms()
+		}
+	}, [activeIndex])
+
+	const handleDeleteForm = async (formId) => {
+		try {
+			await ApiClient.deleteForm(formId)
+			// обновляем список форм
+			setForms(forms.filter(f => f.id !== formId))
+		} catch (error) {
+			console.error('Ошибка удаления формы:', error)
+			setError('Ошибка удаления формы')
+		}
+	}
+
+	const handleLogout = async () => {
+		await ApiClient.logout()
+		navigate('/auth')
+	}
+
+	const hasRole = (requiredRoles) => {
 		return requiredRoles.some(role => userRoles.includes(role))
 	}
 
+	// генерируем аватар
+	const getAvatar = () => {
+		if (!userData || !userData.full_name) {
+			return 'https://ui-avatars.com/api/?name=User&background=f5b7b1&color=fff'
+		}
+
+		const names = userData.full_name.split(' ')
+		const initials = names.slice(0, 2).join('+')
+		const colors = ['f5b7b1', 'e8daef', 'aed6f1', 'a2d9ce', 'abebc6', 'f9e79f', 'fad7a0', 'edbb99']
+		const color = colors[userData.id % colors.length]
+
+		return `https://ui-avatars.com/api/?name=${initials}&background=${color}&color=fff`
+	}
+
 	const renderContent = () => {
+		if (loading) {
+			return (
+				<div className='h-screen w-full flex items-center justify-center'>
+					<div className='text-xl'>Загрузка...</div>
+				</div>
+			)
+		}
+
 		switch (activeIndex) {
 			case 0:
 				return (
 					<Profile
-						img_path={avatar}
+						img_path={getAvatar()}
 						role={userRoles.join(', ')}
-						FullName={FullName.join(' ')}
-						username={'vladdeek'}
-						BirthDate={'27 сентября 2005 г.'}
-						email={'vladryazanov2709@gmail.com'}
-						phone={'+7 (990) 052-06-70'}
+						FullName={userData?.full_name || 'Пользователь'}
+						username={userData?.username || 'username'}
+						BirthDate={userData?.birth_date || 'Не указано'}
+						email={userData?.email || 'email@example.com'}
+						phone={userData?.phone || 'Не указан'}
 						userRoles={userRoles}
 					/>
 				)
@@ -103,9 +153,9 @@ const General = () => {
 								form_description={form.description}
 								form_role={form.responsible}
 								form_count_inputs={form.fields.length}
-								form_create={form.period}
-								form_status={form.type}
-								onDelete={handleDeleteForm} // передаём callback
+								form_create={form.create}
+								form_status={form.status}
+								onDelete={handleDeleteForm}
 							/>
 						))}
 					</Constructor>
@@ -129,7 +179,16 @@ const General = () => {
 			case 7:
 				return <Report chap={'Все отчеты'} />
 			case 8:
-				return <div>Панель</div>
+				return hasRole(['Админ']) ? (
+					<Structure />
+				) : (
+					<div className='h-screen w-full flex items-center justify-center text-3xl'>
+						<div className='flex gap-2 items-center'>
+							<p className='pb-1'>Доступ запрещен</p>
+							<img className='h-full' src='icons/ban.svg' alt='' />
+						</div>
+					</div>
+				)
 			case 9:
 				return hasRole(['Админ']) ? (
 					<New
@@ -168,9 +227,9 @@ const General = () => {
 								form_description={form.description}
 								form_role={form.responsible}
 								form_count_inputs={form.fields.length}
-								form_create={form.period}
-								form_status={form.type}
-								onDelete={handleDeleteForm} // передаём callback
+								form_create={form.create}
+								form_status={form.status}
+								onDelete={handleDeleteForm}
 							/>
 						))}
 					</Constructor>
@@ -202,17 +261,27 @@ const General = () => {
 		}
 	}
 
+	if (loading) {
+		return (
+			<div className='h-screen w-full flex items-center justify-center'>
+				<div className='text-xl'>Загрузка профиля...</div>
+			</div>
+		)
+	}
+
 	return (
 		<>
-			<CheckRole
-				userRoles={userRoles}
-				allRoles={allRoles}
-				setUserRoles={setUserRoles}
-			/>
+			{error && (
+				<div className='fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded z-50'>
+					{error}
+					<button onClick={() => setError('')} className='ml-2 font-bold'>×</button>
+				</div>
+			)}
+
 			<Sidebar
-				username={FullName}
-				role={userRoles.join(', ')}
-				img_path={avatar}
+				username={userData?.full_name?.split(' ') || ['Пользователь']}
+				role={userRoles.join(', ') || 'Не определена'}
+				img_path={getAvatar()}
 			>
 				{hasRole(['Админ']) && (
 					<p className='text-white font-bold text-md'>Основные</p>
@@ -287,6 +356,12 @@ const General = () => {
 					<>
 						<p className='text-white font-bold text-md'>Администратор</p>
 						<SBChapter
+							icon_name='building.svg'
+							chapter_name='Структура'
+							isActive={activeIndex === 8}
+							onClick={() => setActiveIndex(8)}
+						/>
+						<SBChapter
 							icon_name='clipboard-check.svg'
 							chapter_name='Конструктор заявок'
 							isActive={activeIndex === 10 || activeIndex === 11}
@@ -305,7 +380,7 @@ const General = () => {
 					icon_name='log-out.svg'
 					chapter_name='Выйти'
 					isActive={activeIndex === 100}
-					onClick={() => navigate('/auth')}
+					onClick={handleLogout}
 				/>
 			</Sidebar>
 

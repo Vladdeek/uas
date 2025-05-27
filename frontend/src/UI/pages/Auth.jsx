@@ -10,101 +10,198 @@ import {
 	SelectInput,
 	CheckBox,
 } from '../components/Components'
+import ApiClient from '../../api/api.js'
 
 const Auth = () => {
 	const navigate = useNavigate()
 	const [isLogin, setIsLogin] = useState(true)
-	const [RegStep, setRegStep] = useState(1)
-	const [login, setLogin] = useState(true)
-	const [register, setRegister] = useState(true)
+	const [regStep, setRegStep] = useState(1)
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState('')
+	const [success, setSuccess] = useState('')
+
+	// состояния для валидации
+	const [loginValid, setLoginValid] = useState(false)
+	const [registerValid, setRegisterValid] = useState(false)
+
+	// данные для регистрации
+	const [email, setEmail] = useState('')
+	const [password, setPassword] = useState('')
+	const [username, setUsername] = useState('')
+	const [code, setCode] = useState(['', '', '', '', ''])
+
+	// личные данные
+	const [surname, setSurname] = useState('')
+	const [nameUser, setNameUser] = useState('')
+	const [patronymic, setPatronymic] = useState('')
+	const [birthDate, setBirthDate] = useState(null)
+	const [gender, setGender] = useState('')
+
+	// роли
 	const [student, setStudent] = useState(false)
 	const [teacher, setTeacher] = useState(false)
 	const [worker, setWorker] = useState(false)
 	const [schoolboy, setSchoolboy] = useState(false)
 
-	const [email, setEmail] = useState('')
-	const [password, setPassword] = useState('')
-	const [phone, setPhone] = useState('')
-	const [code, setCode] = useState(['', '', '', '', ''])
-	const [username, setUsername] = useState('')
-	const [nameUser, setNameUser] = useState('')
-	const [surname, setSurname] = useState('')
-	const [patronymic, setPatronymic] = useState('')
-	const [birthDate, setBirthDate] = useState(['', '', ''])
-	const [gender, setGender] = useState('')
-
+	// валидация в зависимости от шага
 	useEffect(() => {
-		if (isLogin === true) {
-			setLogin(!(email.trim() && password.trim()))
+		if (isLogin) {
+			setLoginValid(email.trim() && password.trim())
 		} else {
-			if (RegStep === 1) {
-				setRegister(!email.trim())
-			} else if (RegStep === 2) {
-				const filled = code.every(digit => digit !== '')
-				setRegister(!filled)
-			} else if (RegStep === 3) {
-				setRegister(!(email.trim() && password.trim() && username.trim()))
-			} else if (RegStep === 4) {
-				const isAllNamesFilled =
-					surname.trim() && patronymic.trim() && nameUser.trim()
-				const hasBirthDate =
-					birthDate.day && birthDate.month >= 0 && birthDate.year // учти, что month может быть 0
-				const hasGender = gender.trim()
-				setRegister(!(isAllNamesFilled && hasBirthDate && hasGender))
-			} else if (RegStep === 5) {
-				const isAnyRoleChecked = student || teacher || worker || schoolboy
-				setRegister(!isAnyRoleChecked)
+			switch (regStep) {
+				case 1:
+					setRegisterValid(email.trim() && email.includes('@'))
+					break
+				case 2:
+					setRegisterValid(code.every(digit => digit !== ''))
+					break
+				case 3:
+					setRegisterValid(username.trim() && password.trim())
+					break
+				case 4:
+					const hasNames = surname.trim() && nameUser.trim() && patronymic.trim()
+					const hasBirthDate = birthDate && birthDate.day && birthDate.year
+					const hasGender = gender.trim()
+					setRegisterValid(hasNames && hasBirthDate && hasGender)
+					break
+				case 5:
+					setRegisterValid(student || teacher || worker || schoolboy)
+					break
+				default:
+					setRegisterValid(false)
 			}
 		}
-	}, [
-		phone,
-		code,
-		email,
-		password,
-		username,
-		nameUser,
-		patronymic,
-		surname,
-		birthDate,
-		gender,
-		student,
-		teacher,
-		worker,
-		schoolboy,
-		isLogin,
-		RegStep,
-	])
+	}, [isLogin, regStep, email, password, username, code, surname, nameUser, patronymic, birthDate, gender, student, teacher, worker, schoolboy])
 
-	const handleLoginData = () => {
-		console.log(
-			`Успешная авторизация\n` + `Почта: ${email}\n` + `Пароль: ${password}`
-		)
-		navigate('/')
+	const showError = (message) => {
+		setError(message)
+		setTimeout(() => setError(''), 5000)
 	}
-	const handleRegData = () => {
-		const { day, month, year } = birthDate
 
-		console.log(
-			`Успешная регистрация\n` +
-				`Номер телефона: ${phone}\n` +
-				`Код: ${code}\n` +
-				`Почта: ${email}\n` +
-				`Имя пользователя: ${username}\n` +
-				`Пароль: ${password}\n` +
-				`Фамилия: ${surname}\n` +
-				`Имя: ${nameUser}\n` +
-				`Отчество: ${patronymic}\n` +
-				`Дата рождения: ${String(day).padStart(2, '0')}.${String(
-					month + 1
-				).padStart(2, '0')}.${year}\n` +
-				`Пол: ${gender}\n` +
-				`Роли:\n` +
-				`Студент - ${student ? '✔' : '✘'}\n` +
-				`Преподаватель - ${teacher ? '✔' : '✘'}\n` +
-				`Сотрудник - ${worker ? '✔' : '✘'}\n` +
-				`Школьник - ${schoolboy ? '✔' : '✘'}`
-		)
-		navigate('/')
+	const showSuccess = (message) => {
+		setSuccess(message)
+		setTimeout(() => setSuccess(''), 5000)
+	}
+
+	const handleLogin = async () => {
+		if (!loginValid) return
+
+		setLoading(true)
+		try {
+			const response = await ApiClient.login(email, password)
+			console.log('Успешная авторизация:', response.user)
+			navigate('/')
+		} catch (error) {
+			showError(error.message || 'Ошибка авторизации')
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleRegStep1 = async () => {
+		if (!registerValid) return
+
+		setLoading(true)
+		try {
+			await ApiClient.registerStep1(email)
+			setRegStep(2)
+			setRegisterValid(false)
+		} catch (error) {
+			showError(error.message || 'Ошибка отправки кода')
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleRegStep2 = async () => {
+		if (!registerValid) return
+
+		setLoading(true)
+		try {
+			const codeString = code.join('')
+			await ApiClient.verifyCode(email, codeString)
+			setRegStep(3)
+			setRegisterValid(false)
+		} catch (error) {
+			showError(error.message || 'Неверный код')
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleRegStep3 = async () => {
+		if (!registerValid) return
+
+		setLoading(true)
+		try {
+			await ApiClient.registerStep3(email, username, password)
+			setRegStep(4)
+			setRegisterValid(false)
+		} catch (error) {
+			showError(error.message || 'Ошибка сохранения данных')
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleRegStep4 = async () => {
+		if (!registerValid) return
+
+		setLoading(true)
+		try {
+			const profileData = {
+				first_name: nameUser,
+				last_name: surname,
+				middle_name: patronymic,
+				birth_date: `${birthDate.year}-${String(birthDate.month + 1).padStart(2, '0')}-${String(birthDate.day).padStart(2, '0')}`,
+				gender: gender
+			}
+
+			await ApiClient.registerStep4(email, profileData)
+			setRegStep(5)
+			setRegisterValid(false)
+		} catch (error) {
+			showError(error.message || 'Ошибка сохранения профиля')
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleRegComplete = async () => {
+		if (!registerValid) return
+
+		setLoading(true)
+		try {
+			const selectedRoles = []
+			if (student) selectedRoles.push('Студент')
+			if (teacher) {
+				selectedRoles.push('Преподаватель')
+				selectedRoles.push('Сотрудник') // автоматически добавляем сотрудника для преподавателя
+			} else if (worker) {
+				selectedRoles.push('Сотрудник') // добавляем сотрудника если выбран отдельно
+			}
+			if (schoolboy) selectedRoles.push('Школьник')
+
+			await ApiClient.registerComplete(email, selectedRoles)
+
+			console.log('Регистрация завершена успешно! Выбранные роли:', selectedRoles)
+			// автоматически логинимся
+			await ApiClient.login(email, password)
+			navigate('/')
+		} catch (error) {
+			showError(error.message || 'Ошибка завершения регистрации')
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const resendCode = async () => {
+		try {
+			await ApiClient.resendCode(email)
+			showSuccess('Новый код отправлен на email')
+		} catch (error) {
+			showError(error.message || 'Ошибка отправки кода')
+		}
 	}
 
 	return (
@@ -116,6 +213,18 @@ const Auth = () => {
 			</div>
 
 			<form className='z-10 absolute bg-[#ffffff] rounded-3xl p-15 backdrop-blur-md shadow-xl w-125'>
+				{error && (
+					<div className='mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded'>
+						{error}
+					</div>
+				)}
+
+				{success && (
+					<div className='mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded'>
+						{success}
+					</div>
+				)}
+
 				{isLogin ? (
 					<div className='flex flex-col items-center gap-5'>
 						<p className='text-black text-4xl font-semibold mb-5'>
@@ -141,9 +250,9 @@ const Auth = () => {
 							isAuth={true}
 						/>
 						<Submit
-							placeholder='Войти'
-							disable={login}
-							onClick={handleLoginData}
+							placeholder={loading ? 'Входим...' : 'Войти'}
+							disable={!loginValid || loading}
+							onClick={handleLogin}
 							isAuth={true}
 						/>
 						<AuthToggleText
@@ -157,7 +266,7 @@ const Auth = () => {
 						<p className='text-black text-4xl font-semibold mb-5'>
 							Регистрация
 						</p>
-						{RegStep === 1 ? (
+						{regStep === 1 ? (
 							<>
 								<Input
 									type='email'
@@ -169,12 +278,9 @@ const Auth = () => {
 									isAuth={true}
 								/>
 								<Submit
-									placeholder='Продолжить'
-									disable={register}
-									onClick={() => {
-										setRegStep(2)
-										setRegister(true)
-									}}
+									placeholder={loading ? 'Отправляем...' : 'Продолжить'}
+									disable={!registerValid || loading}
+									onClick={handleRegStep1}
 									isAuth={true}
 								/>
 								<AuthToggleText
@@ -183,7 +289,7 @@ const Auth = () => {
 									onClick={() => setIsLogin(true)}
 								/>
 							</>
-						) : RegStep === 2 ? (
+						) : regStep === 2 ? (
 							<>
 								<p className='text-center text-xl'>
 									Введите код из письма. Мы отправили его на указанный вами
@@ -195,20 +301,17 @@ const Auth = () => {
 								<AuthToggleText
 									text=''
 									linkText='Отправить новый код'
-									onClick={() => setIsLogin(true)}
+									onClick={resendCode}
 								/>
 
 								<Submit
-									placeholder='Продолжить'
-									disable={register}
-									onClick={() => {
-										setRegStep(3)
-										setRegister(true)
-									}}
+									placeholder={loading ? 'Проверяем...' : 'Продолжить'}
+									disable={!registerValid || loading}
+									onClick={handleRegStep2}
 									isAuth={true}
 								/>
 							</>
-						) : RegStep === 3 ? (
+						) : regStep === 3 ? (
 							<>
 								<Input
 									type='text'
@@ -230,16 +333,13 @@ const Auth = () => {
 									isAuth={true}
 								/>
 								<Submit
-									placeholder='Продолжить'
-									disable={register}
-									onClick={() => {
-										setRegStep(4)
-										setRegister(true)
-									}}
+									placeholder={loading ? 'Сохраняем...' : 'Продолжить'}
+									disable={!registerValid || loading}
+									onClick={handleRegStep3}
 									isAuth={true}
 								/>
 							</>
-						) : RegStep === 4 ? (
+						) : regStep === 4 ? (
 							<>
 								<div className='flex flex-col w-full'>
 									<Input
@@ -278,12 +378,9 @@ const Auth = () => {
 									onChange={setGender}
 								/>
 								<Submit
-									placeholder='Подтвердить'
-									disable={register}
-									onClick={() => {
-										setRegStep(5)
-										setRegister(true)
-									}}
+									placeholder={loading ? 'Сохраняем...' : 'Подтвердить'}
+									disable={!registerValid || loading}
+									onClick={handleRegStep4}
 									isAuth={true}
 								/>
 							</>
@@ -293,38 +390,37 @@ const Auth = () => {
 									<p className='text-center text-xl font-normal mb-4'>
 										Выбор роли
 									</p>
-									<div className='bg-[#fafafa] rounded-xl  mx-auto p-3 border-1 border-gray-300'>
+									<div className='bg-[#fafafa] rounded-xl mx-auto p-3 border-1 border-gray-300'>
 										<CheckBox
 											placeholder={'Студент'}
-											disabled={schoolboy && true}
+											disabled={schoolboy}
+											checked={student}
 											onChange={() => setStudent(prev => !prev)}
 										/>
 										<CheckBox
 											placeholder={'Преподаватель'}
-											disabled={schoolboy && true}
+											disabled={schoolboy}
+											checked={teacher}
 											onChange={() => setTeacher(prev => !prev)}
 										/>
 										<CheckBox
 											placeholder={'Сотрудник'}
-											disabled={(teacher && true) || (schoolboy && true)}
+											disabled={teacher || schoolboy}
 											checked={teacher ? true : worker}
 											onChange={() => setWorker(prev => !prev)}
 										/>
 										<CheckBox
 											placeholder={'Школьник'}
-											disabled={
-												(teacher && true) ||
-												(student && true) ||
-												(worker && true)
-											}
+											disabled={teacher || student || worker}
+											checked={schoolboy}
 											onChange={() => setSchoolboy(prev => !prev)}
 										/>
 									</div>
 
 									<Submit
-										placeholder='Подтвердить'
-										disable={register}
-										onClick={handleRegData}
+										placeholder={loading ? 'Завершаем...' : 'Подтвердить'}
+										disable={!registerValid || loading}
+										onClick={handleRegComplete}
 										isAuth={true}
 									/>
 								</div>
