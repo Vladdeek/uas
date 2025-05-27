@@ -14,7 +14,7 @@ const Profile = ({
 	}
 	return (
 		<div className='flex flex-col gap-10 items-center w-full pt-15'>
-			<div className='flex flex-col gap-5 rounded-xl  border-1 border-[#00000015] p-4 w-3/5'>
+			<div className='flex flex-col gap-5 rounded-xl bg-white border-1 border-gray-300 p-4 w-3/5'>
 				<div className='flex justify-between items-center'>
 					<p className='font-bold text-2xl'>Основная информация</p>
 				</div>
@@ -28,7 +28,7 @@ const Profile = ({
 				</div>
 			</div>
 			{userRoles.length > 0 && (
-				<div className='flex flex-col gap-5 rounded-xl  border-1 border-[#00000015] p-4 w-3/5'>
+				<div className='flex flex-col gap-5 rounded-xl bg-white border-1 border-gray-300 p-4 w-3/5'>
 					<div className='flex justify-between items-center'>
 						<p className='font-bold text-2xl'>Дополнительная информация</p>
 					</div>
@@ -104,7 +104,7 @@ const Profile = ({
 				</div>
 			)}
 
-			<div className='flex flex-col gap-5 rounded-xl  border-1 border-[#00000015] p-4 w-3/5'>
+			<div className='flex flex-col gap-5 rounded-xl bg-white border-1 border-gray-300 p-4 w-3/5'>
 				<div className='flex justify-between items-center'>
 					<p className='font-bold text-2xl'>Контактная информация</p>
 				</div>
@@ -119,7 +119,7 @@ const Profile = ({
 					</div>
 				</div>
 			</div>
-			<div className='flex flex-col gap-5 rounded-xl  border-1 border-[#00000015] p-4 w-3/5'>
+			<div className='flex flex-col gap-5 rounded-xl bg-white border-1 border-gray-300 p-4 w-3/5'>
 				<div className='flex justify-between items-center'>
 					<p className='font-bold text-2xl'>Пароль</p>
 					<img className='cursor-pointer' src='icons/square-pen.svg' alt='' />
@@ -131,7 +131,7 @@ const Profile = ({
 					</div>
 				</div>
 			</div>
-			<div className='flex flex-col gap-5 rounded-xl  border-1 border-[#00000015] p-4 w-3/5'>
+			<div className='flex flex-col gap-5 rounded-xl bg-white border-1 border-gray-300 p-4 w-3/5'>
 				<div className='flex justify-between items-center'>
 					<p className='font-bold text-2xl'>Двухфакторная аутентификация </p>
 					<img className='cursor-pointer' src='icons/square-pen.svg' alt='' />
@@ -143,7 +143,7 @@ const Profile = ({
 					</div>
 				</div>
 			</div>
-			<div className='flex flex-col gap-5 rounded-xl  border-1 border-[#00000015] p-4 w-3/5'>
+			<div className='flex flex-col gap-5 rounded-xl bg-white border-1 border-gray-300 p-4 w-3/5'>
 				<div className='flex justify-between items-center'>
 					<p className='font-bold text-2xl'>Социальные сети </p>
 				</div>

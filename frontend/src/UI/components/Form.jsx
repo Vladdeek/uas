@@ -41,9 +41,9 @@ const Form = ({
 
 	return (
 		<>
-			<div className='bg-white rounded-3xl shadow-sm p-4 relative'>
+			<div className='bg-white rounded-3xl shadow-sm p-5 relative'>
 				<div className='flex justify-between items-center mb-1'>
-					<p className='text-lg font-bold ml-1'>{form_name}</p>
+					<p className='text-lg font-bold'>{form_name}</p>
 					<div className='relative' ref={menuRef}>
 						<img
 							onClick={toggleMenu}
@@ -75,9 +75,7 @@ const Form = ({
 						)}
 					</div>
 				</div>
-				<p className='text-stone-700 font-light h-20 border-1 border-gray-200 rounded-lg px-1'>
-					{form_description}
-				</p>
+				<p className='text-stone-700 font-light h-20'>{form_description}</p>
 				<div className='flex items-center gap-1 opacity-50'>
 					<img className='h-5' src='icons/users.svg' alt='' />
 					<p className=' mb-1'>
@@ -93,7 +91,7 @@ const Form = ({
 				</div>
 
 				<div className='flex gap-3'>
-					<p className='bg-gray-200 text-gray-500 pb-1 px-2 rounded-full font-normal'>
+					<p className='bg-gray-200 text-gray-500 pb-1 px-3 rounded-full font-normal'>
 						{form_create}
 					</p>
 					<p className='bg-green-200 text-green-500 pb-1 px-2 rounded-full font-semibold'>

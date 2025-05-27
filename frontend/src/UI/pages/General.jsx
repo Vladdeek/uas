@@ -36,7 +36,6 @@ const General = () => {
 		'Сотрудник',
 		'Студент',
 		'Школьник',
-		'Абитуриент',
 		'Преподаватель',
 		'Админ',
 	]
@@ -79,32 +78,6 @@ const General = () => {
 							form_status={'Статус'}
 							form_create={'ДД.ММ.ГГГГ'}
 						/>
-						<Form
-							form_count_inputs={3}
-							form_name={'Финансовый отчет за Q1 2024'}
-							form_description={'Основные показатели прибыли и убытков'}
-							form_role={'Финансовый отдел'}
-							form_status={'Статус'}
-							form_create={'15.03.2024'}
-						/>
-
-						<Form
-							form_count_inputs={7}
-							form_name={'Анализ продаж по регионам'}
-							form_description={'Сравнение эффективности региональных отделов'}
-							form_role={'Отдел продаж'}
-							form_status={'Статус'}
-							form_create={'10.02.2023'}
-						/>
-
-						<Form
-							form_count_inputs={2}
-							form_name={'Отчет по кадровым изменениям'}
-							form_description={'Нанятые и уволенные сотрудники за месяц'}
-							form_role={'HR-отдел'}
-							form_status={'Статус'}
-							form_create={'05.05.2024'}
-						/>
 					</Constructor>
 				) : (
 					<div className='h-screen w-full flex items-center justify-center text-3xl'>
@@ -128,7 +101,16 @@ const General = () => {
 			case 8:
 				return <div>Панель</div>
 			case 9:
-				return <New NewName={'новый отчет'} />
+				return hasRole(['Админ']) ? (
+					<New type={'отчеты'} />
+				) : (
+					<div className='h-screen w-full flex items-center justify-center text-3xl'>
+						<div className='flex gap-2 items-center'>
+							<p className='pb-1'>Доступ запрещен</p>
+							<img className='h-full' src='icons/ban.svg' alt='' />
+						</div>
+					</div>
+				)
 			case 10:
 				return hasRole(['Админ']) ? (
 					<Constructor
@@ -137,23 +119,12 @@ const General = () => {
 						ConstName={'заявок'}
 					>
 						<Form
-							form_count_inputs={5}
-							form_name={'Маркетинговый отчет: эффективность кампаний'}
-							form_description={'CTR, конверсии и ROI рекламных каналов'}
-							form_role={'Маркетинг'}
+							form_count_inputs={'N'}
+							form_name={'Название заявки'}
+							form_description={'Короткое описание заявки'}
+							form_role={'Подразделение'}
 							form_status={'Статус'}
-							form_create={'22.04.2024'}
-						/>
-
-						<Form
-							form_count_inputs={4}
-							form_name={'Технический аудит серверов'}
-							form_description={
-								'Загрузка CPU, память, инциденты за последний месяц'
-							}
-							form_role={'IT-инфраструктура'}
-							form_status={'Статус'}
-							form_create={'30.12.2023'}
+							form_create={'ДД.ММ.ГГГГ'}
 						/>
 					</Constructor>
 				) : (
@@ -165,7 +136,16 @@ const General = () => {
 					</div>
 				)
 			case 11:
-				return <New NewName={'новая заявка'} />
+				return hasRole(['Админ']) ? (
+					<New type={'заявки'} />
+				) : (
+					<div className='h-screen w-full flex items-center justify-center text-3xl'>
+						<div className='flex gap-2 items-center'>
+							<p className='pb-1'>Доступ запрещен</p>
+							<img className='h-full' src='icons/ban.svg' alt='' />
+						</div>
+					</div>
+				)
 			default:
 				return null
 		}
@@ -237,17 +217,6 @@ const General = () => {
 						<SBChapter
 							icon_name='file-chart-column.svg'
 							chapter_name='Нагрузка'
-							isActive={activeIndex === 5}
-							onClick={() => setActiveIndex(5)}
-						/>
-					</>
-				)}
-
-				{hasRole(['Абитуриент']) && (
-					<>
-						<SBChapter
-							icon_name='graduation-cap.svg'
-							chapter_name='Поступление'
 							isActive={activeIndex === 5}
 							onClick={() => setActiveIndex(5)}
 						/>

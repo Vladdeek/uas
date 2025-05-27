@@ -1,7 +1,12 @@
 @import 'tailwindcss';
 body {
-	background-color: #fefefe;
+	background-color: #efefef;
 }
+.red-icon {
+	filter: invert(21%) sepia(100%) saturate(7445%) hue-rotate(356deg)
+		brightness(93%) contrast(120%);
+}
+
 .square {
 	position: relative;
 	margin: 0 10px;

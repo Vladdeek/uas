@@ -8,6 +8,7 @@ import {
 	Push,
 	DateInput,
 	SelectInput,
+	CheckBox,
 } from '../components/Components'
 
 const Auth = () => {
@@ -16,6 +17,10 @@ const Auth = () => {
 	const [RegStep, setRegStep] = useState(1)
 	const [login, setLogin] = useState(true)
 	const [register, setRegister] = useState(true)
+	const [student, setStudent] = useState(false)
+	const [teacher, setTeacher] = useState(false)
+	const [worker, setWorker] = useState(false)
+	const [schoolboy, setSchoolboy] = useState(false)
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -39,11 +44,36 @@ const Auth = () => {
 				setRegister(!filled)
 			} else if (RegStep === 3) {
 				setRegister(!(email.trim() && password.trim() && username.trim()))
-			} else {
-				setRegister(!(surname.trim() && patronymic.trim() && nameUser.trim()))
+			} else if (RegStep === 4) {
+				const isAllNamesFilled =
+					surname.trim() && patronymic.trim() && nameUser.trim()
+				const hasBirthDate =
+					birthDate.day && birthDate.month >= 0 && birthDate.year // учти, что month может быть 0
+				const hasGender = gender.trim()
+				setRegister(!(isAllNamesFilled && hasBirthDate && hasGender))
+			} else if (RegStep === 5) {
+				const isAnyRoleChecked = student || teacher || worker || schoolboy
+				setRegister(!isAnyRoleChecked)
 			}
 		}
-	}, [phone, code, email, password, username, nameUser, patronymic, surname])
+	}, [
+		phone,
+		code,
+		email,
+		password,
+		username,
+		nameUser,
+		patronymic,
+		surname,
+		birthDate,
+		gender,
+		student,
+		teacher,
+		worker,
+		schoolboy,
+		isLogin,
+		RegStep,
+	])
 
 	const handleLoginData = () => {
 		console.log(
@@ -67,7 +97,12 @@ const Auth = () => {
 				`Дата рождения: ${String(day).padStart(2, '0')}.${String(
 					month + 1
 				).padStart(2, '0')}.${year}\n` +
-				`Пол: ${gender}`
+				`Пол: ${gender}\n` +
+				`Роли:\n` +
+				`Студент - ${student ? '✔' : '✘'}\n` +
+				`Преподаватель - ${teacher ? '✔' : '✘'}\n` +
+				`Сотрудник - ${worker ? '✔' : '✘'}\n` +
+				`Школьник - ${schoolboy ? '✔' : '✘'}`
 		)
 		navigate('/')
 	}
@@ -93,6 +128,7 @@ const Auth = () => {
 							icon={true}
 							value={email}
 							onChange={e => setEmail(e.target.value)}
+							isAuth={true}
 						/>
 						<Input
 							isLogin={isLogin}
@@ -102,11 +138,13 @@ const Auth = () => {
 							icon={true}
 							value={password}
 							onChange={e => setPassword(e.target.value)}
+							isAuth={true}
 						/>
 						<Submit
 							placeholder='Войти'
 							disable={login}
 							onClick={handleLoginData}
+							isAuth={true}
 						/>
 						<AuthToggleText
 							text='Еще нет учетной записи?'
@@ -128,6 +166,7 @@ const Auth = () => {
 									icon={true}
 									value={email}
 									onChange={e => setEmail(e.target.value)}
+									isAuth={true}
 								/>
 								<Submit
 									placeholder='Продолжить'
@@ -136,6 +175,7 @@ const Auth = () => {
 										setRegStep(2)
 										setRegister(true)
 									}}
+									isAuth={true}
 								/>
 								<AuthToggleText
 									text=''
@@ -165,6 +205,7 @@ const Auth = () => {
 										setRegStep(3)
 										setRegister(true)
 									}}
+									isAuth={true}
 								/>
 							</>
 						) : RegStep === 3 ? (
@@ -176,6 +217,7 @@ const Auth = () => {
 									icon={true}
 									value={username}
 									onChange={e => setUsername(e.target.value)}
+									isAuth={true}
 								/>
 
 								<Input
@@ -185,6 +227,7 @@ const Auth = () => {
 									icon={true}
 									value={password}
 									onChange={e => setPassword(e.target.value)}
+									isAuth={true}
 								/>
 								<Submit
 									placeholder='Продолжить'
@@ -193,9 +236,10 @@ const Auth = () => {
 										setRegStep(4)
 										setRegister(true)
 									}}
+									isAuth={true}
 								/>
 							</>
-						) : (
+						) : RegStep === 4 ? (
 							<>
 								<div className='flex flex-col w-full'>
 									<Input
@@ -205,6 +249,7 @@ const Auth = () => {
 										icon={false}
 										value={surname}
 										onChange={e => setSurname(e.target.value)}
+										isAuth={true}
 									/>
 									<Input
 										type='text'
@@ -213,6 +258,7 @@ const Auth = () => {
 										icon={false}
 										value={nameUser}
 										onChange={e => setNameUser(e.target.value)}
+										isAuth={true}
 									/>
 									<Input
 										type='text'
@@ -221,6 +267,7 @@ const Auth = () => {
 										icon={false}
 										value={patronymic}
 										onChange={e => setPatronymic(e.target.value)}
+										isAuth={true}
 									/>
 								</div>
 
@@ -233,8 +280,54 @@ const Auth = () => {
 								<Submit
 									placeholder='Подтвердить'
 									disable={register}
-									onClick={handleRegData}
+									onClick={() => {
+										setRegStep(5)
+										setRegister(true)
+									}}
+									isAuth={true}
 								/>
+							</>
+						) : (
+							<>
+								<div className='flex flex-col w-full'>
+									<p className='text-center text-xl font-normal mb-4'>
+										Выбор роли
+									</p>
+									<div className='bg-[#fafafa] rounded-xl  mx-auto p-3 border-1 border-gray-300'>
+										<CheckBox
+											placeholder={'Студент'}
+											disabled={schoolboy && true}
+											onChange={() => setStudent(prev => !prev)}
+										/>
+										<CheckBox
+											placeholder={'Преподаватель'}
+											disabled={schoolboy && true}
+											onChange={() => setTeacher(prev => !prev)}
+										/>
+										<CheckBox
+											placeholder={'Сотрудник'}
+											disabled={(teacher && true) || (schoolboy && true)}
+											checked={teacher ? true : worker}
+											onChange={() => setWorker(prev => !prev)}
+										/>
+										<CheckBox
+											placeholder={'Школьник'}
+											disabled={
+												(teacher && true) ||
+												(student && true) ||
+												(worker && true)
+											}
+											onChange={() => setSchoolboy(prev => !prev)}
+										/>
+									</div>
+
+									<Submit
+										placeholder='Подтвердить'
+										disable={register}
+										onClick={handleRegData}
+										isAuth={true}
+									/>
+								</div>
 							</>
 						)}
 					</div>

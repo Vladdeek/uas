@@ -57,10 +57,15 @@ const Input = ({
 	icon,
 	value,
 	onChange,
+	isAuth,
 }) => {
 	return (
 		<div className='flex flex-col gap-1 w-full'>
-			<div className='flex border-b-3 border-[#00000010] w-full h-15 p-2 gap-2'>
+			<div
+				className={`flex border-b-2 border-gray-300 w-full ${
+					isAuth ? 'p-2 h-15' : 'h-10'
+				} px-2 gap-2`}
+			>
 				{icon && (
 					<img
 						className='opacity-15 text-red p-1'
@@ -71,7 +76,9 @@ const Input = ({
 				<input
 					type={type}
 					placeholder={placeholder}
-					className='text-2xl font-normal opacity-50 outline-none'
+					className={`${
+						isAuth ? 'text-2xl opacity-50' : 'text-xl'
+					}  font-normal  outline-none`}
 					value={value}
 					onChange={onChange}
 				/>
@@ -127,13 +134,13 @@ const DateInput = ({ onChange }) => {
 					type='text'
 					value={dayStr}
 					onChange={e => setDayStr(e.target.value.replace(/\D/g, ''))} // только цифры
-					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-3 border-[#00000010] w-full'
+					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-2 border-gray-300 w-full'
 				/>
 
 				<select
 					value={month}
 					onChange={e => setMonth(Number(e.target.value))}
-					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-3 border-[#00000010]'
+					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-2 border-gray-300'
 				>
 					{months.map((name, index) => (
 						<option key={index} value={index}>
@@ -148,7 +155,7 @@ const DateInput = ({ onChange }) => {
 					type='text'
 					value={yearStr}
 					onChange={e => setYearStr(e.target.value.replace(/\D/g, ''))} // только цифры
-					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-3 border-[#00000010] w-full'
+					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-2 border-gray-300 w-full'
 				/>
 			</div>
 		</div>
@@ -168,7 +175,7 @@ const SelectInput = ({ placeholder, optionsMass, onChange }) => {
 			<select
 				value={value}
 				onChange={e => setValue(e.target.value)}
-				className='text-center text-2xl flex-1 px-1 py-2 outline-none border-b-3 border-[#00000010]'
+				className='pl-2 text-xl flex-1 px-1 py-2 outline-none border-b-2 border-gray-300'
 			>
 				{optionsMass.map((option, index) => (
 					<option key={index} value={option}>
@@ -179,8 +186,21 @@ const SelectInput = ({ placeholder, optionsMass, onChange }) => {
 		</div>
 	)
 }
+const CheckBox = ({ placeholder, onChange, disabled, checked }) => {
+	return (
+		<div className='flex gap-2 items-center p-1'>
+			<input
+				type='checkbox'
+				onChange={onChange}
+				disabled={disabled}
+				checked={checked}
+			/>
+			<p className='text-lg'>{placeholder} </p>
+		</div>
+	)
+}
 
-const Submit = ({ placeholder, disable, onClick }) => {
+const Submit = ({ placeholder, disable, onClick, isAuth }) => {
 	const handleClick = e => {
 		e.preventDefault() // предотврати отправку формы и перезагрузку
 		if (!disable && onClick) {
@@ -190,9 +210,11 @@ const Submit = ({ placeholder, disable, onClick }) => {
 
 	return (
 		<input
-			className={`text-white text-2xl font-semibold rounded-2xl  ${
+			className={`text-white font-semibold rounded-2xl  ${
 				disable ? 'bg-gray-300 cursor-default' : 'bg-[#820000] cursor-pointer'
-			} w-full p-5 my-10`}
+			}  ${
+				isAuth ? 'my-10 text-2xl p-5 w-full' : 'text-xl p-3 mx-auto w-2/3'
+			} `}
 			type='submit'
 			value={placeholder}
 			disabled={disable}
@@ -256,6 +278,8 @@ const Push = ({ code, setCode }) => {
 	)
 }
 
+const FieldConstructInput = () => {}
+
 export {
 	PhoneNumInput,
 	Input,
@@ -264,4 +288,6 @@ export {
 	Push,
 	DateInput,
 	SelectInput,
+	FieldConstructInput,
+	CheckBox,
 }

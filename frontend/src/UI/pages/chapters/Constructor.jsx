@@ -8,7 +8,7 @@ const Constructor = ({ onClick, ConstName, ConstBtn, children }) => {
 					<h1 className='text-4xl font-bold mb-5'>Конструктор {ConstName}</h1>
 					<button
 						onClick={onClick}
-						className='flex items-center gap-2 text-white bg-[#820000] px-3 pt-1 pb-2 rounded-xl text-2xl font-semibold'
+						className='flex items-center gap-2 text-white bg-[#820000] px-3 pt-1 pb-2 rounded-lg text-2xl font-semibold'
 					>
 						<img
 							className='h-full invert-100 pt-1'
