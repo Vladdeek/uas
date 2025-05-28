@@ -2,18 +2,62 @@ import { useEffect, useState } from 'react'
 import { SelectInput, Input, Submit } from '../components/Components'
 
 const New = ({ type, setActiveIndex, setForms }) => {
+	// Состояния для создания новой формы
 	const [nameNewForm, setNameNewForm] = useState('')
 	const [descriptionNewForm, setDescriptionNewForm] = useState('')
 	const [responsible, setResponsible] = useState('')
 	const [period, setPeriod] = useState('')
-	const [selectedType, setSelectedType] = useState('Текст')
-	const [options, setOptions] = useState([])
-	const [fieldName, setFieldName] = useState('')
-	const [fieldValues, setFieldValues] = useState({})
-	const [previewFields, setPreviewFields] = useState([])
-	const [isRequired, setIsRequired] = useState(false)
-	const [Enabled, setEnabled] = useState(false)
 
+	//  Поля формы
+	const [fieldName, setFieldName] = useState('')
+	const [selectedType, setSelectedType] = useState('Текст')
+	const [isRequired, setIsRequired] = useState(false)
+	const [options, setOptions] = useState([]) // Опции для выпадающего меню
+	const [fieldValues, setFieldValues] = useState({})
+	const [previewFields, setPreviewFields] = useState([]) // Поля в предпросмотре
+
+	//  Вспомогательные состояния
+	const [Enabled, setEnabled] = useState(false) // Заблокировать добавление, если поле пустое
+
+	//  Обновление кнопки добавления поля при пустом fieldName
+	useEffect(() => {
+		setEnabled(!fieldName.trim())
+	}, [fieldName])
+
+	//  Добавление нового поля в список предпросмотра
+	const handleAddField = () => {
+		if (!fieldName.trim()) return
+
+		const newField = {
+			name: fieldName,
+			type: selectedType,
+			required: isRequired,
+			options: selectedType === 'Выпадающее меню' ? options : [],
+		}
+
+		setPreviewFields(prev => [...prev, newField])
+
+		// Установка значения по умолчанию для выпадающего меню
+		if (selectedType === 'Выпадающее меню' && options.length > 0) {
+			const index = previewFields.length
+			setFieldValues(prev => ({ ...prev, [index]: options[0] }))
+		}
+
+		// Сброс значений после добавления поля
+		setFieldName('')
+		setSelectedType('Текст')
+		setIsRequired(false)
+		setOptions([])
+	}
+
+	//  Удаление поля из предпросмотра
+	const removeField = indexToRemove => {
+		setPreviewFields(prevFields =>
+			prevFields.filter((_, index) => index !== indexToRemove)
+		)
+	}
+
+	//  Работа с опциями для выпадающего меню
 	const handleAddOption = () => {
 		setOptions([...options, ''])
 	}
@@ -29,38 +73,7 @@ const New = ({ type, setActiveIndex, setForms }) => {
 		setOptions(updatedOptions)
 	}
 
-	const removeField = indexToRemove => {
-		setPreviewFields(prevFields =>
-			prevFields.filter((_, index) => index !== indexToRemove)
-		)
-	}
-
-	const handleAddField = () => {
-		if (!fieldName.trim()) return
-
-		const newField = {
-			name: fieldName,
-			type: selectedType,
-			required: isRequired,
-			options: selectedType === 'Выпадающее меню' ? options : [],
-		}
-
-		setPreviewFields(prev => [...prev, newField])
-
-		if (selectedType === 'Выпадающее меню' && options.length > 0) {
-			const index = previewFields.length
-			setFieldValues(prev => ({ ...prev, [index]: options[0] }))
-		}
-		setSelectedType('Текст')
-		setFieldName('')
-		setOptions([])
-		setIsRequired(false)
-	}
-
-	useEffect(() => {
-		setEnabled(!fieldName.trim())
-	}, [fieldName])
-
+	//  Сохранение формы в localStorage
 	const handleSaveForm = () => {
 		if (!nameNewForm.trim()) {
 			alert('Введите название формы')
@@ -69,7 +82,7 @@ const New = ({ type, setActiveIndex, setForms }) => {
 
 		const newForm = {
 			id: Date.now(),
-			type, // 'заявка' или 'отчёты'
+			type, // предполагается, что переменная type определена где-то выше
 			name: nameNewForm,
 			description: descriptionNewForm,
 			responsible,
@@ -77,22 +90,20 @@ const New = ({ type, setActiveIndex, setForms }) => {
 			fields: previewFields,
 		}
 
-		// Сохраняем в localStorage
 		const storedForms = JSON.parse(localStorage.getItem('forms')) || []
 		const updatedForms = [...storedForms, newForm]
 		localStorage.setItem('forms', JSON.stringify(updatedForms))
 
-		// Обновляем стейт с формами (предположим, у вас есть setForms)
 		setForms(updatedForms)
 
-		// Переход на нужный экран
+		// Навигация по вкладкам конструктора
 		if (type === 'отчёты') {
-			setActiveIndex(2) // case 2: Constructor для отчетов
+			setActiveIndex(2)
 		} else {
-			setActiveIndex(10) // case 10: Constructor для заявок
+			setActiveIndex(10)
 		}
 
-		// Очистка полей формы
+		// Очистка состояний
 		setNameNewForm('')
 		setDescriptionNewForm('')
 		setResponsible('')

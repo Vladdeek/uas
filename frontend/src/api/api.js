@@ -1,196 +1,198 @@
+const url = ['http://81.200.144.179:5000/api', 'http://localhost:5000/api']
+
 // API клиент для работы с бэкендом
-const API_BASE_URL = 'http://localhost:5000/api'
+const API_BASE_URL = url[0]
 
 class ApiClient {
-    constructor() {
-        this.token = localStorage.getItem('access_token')
-    }
+	constructor() {
+		this.token = localStorage.getItem('access_token')
+	}
 
-    // базовый метод для запросов
-    async request(endpoint, options = {}) {
-        const url = `${API_BASE_URL}${endpoint}`
+	// базовый метод для запросов
+	async request(endpoint, options = {}) {
+		const url = `${API_BASE_URL}${endpoint}`
 
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-            },
-            ...options,
-        }
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+				...options.headers,
+			},
+			...options,
+		}
 
-        // добавляем токен если есть
-        if (this.token) {
-            config.headers.Authorization = `Bearer ${this.token}`
-        }
+		// добавляем токен если есть
+		if (this.token) {
+			config.headers.Authorization = `Bearer ${this.token}`
+		}
 
-        try {
-            const response = await fetch(url, config)
-            const data = await response.json()
+		try {
+			const response = await fetch(url, config)
+			const data = await response.json()
 
-            if (!response.ok) {
-                throw new Error(data.error || 'Ошибка API')
-            }
+			if (!response.ok) {
+				throw new Error(data.error || 'Ошибка API')
+			}
 
-            return data
-        } catch (error) {
-            console.error('API Error:', error)
-            throw error
-        }
-    }
+			return data
+		} catch (error) {
+			console.error('API Error:', error)
+			throw error
+		}
+	}
 
-    // методы авторизации
-    async registerStep1(email) {
-        return this.request('/auth/register-step1', {
-            method: 'POST',
-            body: JSON.stringify({ email })
-        })
-    }
+	// методы авторизации
+	async registerStep1(email) {
+		return this.request('/auth/register-step1', {
+			method: 'POST',
+			body: JSON.stringify({ email }),
+		})
+	}
 
-    async verifyCode(email, code) {
-        return this.request('/auth/verify-code', {
-            method: 'POST',
-            body: JSON.stringify({ email, code })
-        })
-    }
+	async verifyCode(email, code) {
+		return this.request('/auth/verify-code', {
+			method: 'POST',
+			body: JSON.stringify({ email, code }),
+		})
+	}
 
-    async registerStep3(email, username, password) {
-        return this.request('/auth/register-step3', {
-            method: 'POST',
-            body: JSON.stringify({ email, username, password })
-        })
-    }
+	async registerStep3(email, username, password) {
+		return this.request('/auth/register-step3', {
+			method: 'POST',
+			body: JSON.stringify({ email, username, password }),
+		})
+	}
 
-    async registerStep4(email, profileData) {
-        return this.request('/auth/register-step4', {
-            method: 'POST',
-            body: JSON.stringify({ email, ...profileData })
-        })
-    }
+	async registerStep4(email, profileData) {
+		return this.request('/auth/register-step4', {
+			method: 'POST',
+			body: JSON.stringify({ email, ...profileData }),
+		})
+	}
 
-    async registerComplete(email, roles) {
-        return this.request('/auth/register-complete', {
-            method: 'POST',
-            body: JSON.stringify({ email, roles })
-        })
-    }
+	async registerComplete(email, roles) {
+		return this.request('/auth/register-complete', {
+			method: 'POST',
+			body: JSON.stringify({ email, roles }),
+		})
+	}
 
-    async resendCode(email) {
-        return this.request('/auth/resend-code', {
-            method: 'POST',
-            body: JSON.stringify({ email })
-        })
-    }
+	async resendCode(email) {
+		return this.request('/auth/resend-code', {
+			method: 'POST',
+			body: JSON.stringify({ email }),
+		})
+	}
 
-    async login(email, password) {
-        const response = await this.request('/auth/login', {
-            method: 'POST',
-            body: JSON.stringify({ email, password })
-        })
+	async login(email, password) {
+		const response = await this.request('/auth/login', {
+			method: 'POST',
+			body: JSON.stringify({ email, password }),
+		})
 
-        // сохраняем токены
-        if (response.access_token) {
-            localStorage.setItem('access_token', response.access_token)
-            localStorage.setItem('refresh_token', response.refresh_token)
-            localStorage.setItem('user_data', JSON.stringify(response.user))
-            this.token = response.access_token
-        }
+		// сохраняем токены
+		if (response.access_token) {
+			localStorage.setItem('access_token', response.access_token)
+			localStorage.setItem('refresh_token', response.refresh_token)
+			localStorage.setItem('user_data', JSON.stringify(response.user))
+			this.token = response.access_token
+		}
 
-        return response
-    }
+		return response
+	}
 
-    async refreshToken() {
-        const refreshToken = localStorage.getItem('refresh_token')
-        if (!refreshToken) {
-            throw new Error('Нет refresh токена')
-        }
+	async refreshToken() {
+		const refreshToken = localStorage.getItem('refresh_token')
+		if (!refreshToken) {
+			throw new Error('Нет refresh токена')
+		}
 
-        const response = await this.request('/auth/refresh', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${refreshToken}`
-            }
-        })
+		const response = await this.request('/auth/refresh', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${refreshToken}`,
+			},
+		})
 
-        localStorage.setItem('access_token', response.access_token)
-        this.token = response.access_token
-        return response
-    }
+		localStorage.setItem('access_token', response.access_token)
+		this.token = response.access_token
+		return response
+	}
 
-    async logout() {
-        localStorage.removeItem('access_token')
-        localStorage.removeItem('refresh_token')
-        localStorage.removeItem('user_data')
-        this.token = null
-    }
+	async logout() {
+		localStorage.removeItem('access_token')
+		localStorage.removeItem('refresh_token')
+		localStorage.removeItem('user_data')
+		this.token = null
+	}
 
-    // работа с профилем
-    async getUserProfile() {
-        return this.request('/user/profile')
-    }
+	// работа с профилем
+	async getUserProfile() {
+		return this.request('/user/profile')
+	}
 
-    // работа с формами
-    async getForms() {
-        return this.request('/forms')
-    }
+	// работа с формами
+	async getForms() {
+		return this.request('/forms')
+	}
 
-    async createForm(formData) {
-        return this.request('/forms', {
-            method: 'POST',
-            body: JSON.stringify(formData)
-        })
-    }
+	async createForm(formData) {
+		return this.request('/forms', {
+			method: 'POST',
+			body: JSON.stringify(formData),
+		})
+	}
 
-    async deleteForm(formId) {
-        return this.request(`/forms/${formId}`, {
-            method: 'DELETE'
-        })
-    }
+	async deleteForm(formId) {
+		return this.request(`/forms/${formId}`, {
+			method: 'DELETE',
+		})
+	}
 
-    // работа со структурой подразделений
-    async getDepartments() {
-        return this.request('/departments')
-    }
+	// работа со структурой подразделений
+	async getDepartments() {
+		return this.request('/departments')
+	}
 
-    async createDepartment(departmentData) {
-        return this.request('/departments', {
-            method: 'POST',
-            body: JSON.stringify(departmentData)
-        })
-    }
+	async createDepartment(departmentData) {
+		return this.request('/departments', {
+			method: 'POST',
+			body: JSON.stringify(departmentData),
+		})
+	}
 
-    async updateDepartment(departmentId, departmentData) {
-        return this.request(`/departments/${departmentId}`, {
-            method: 'PUT',
-            body: JSON.stringify(departmentData)
-        })
-    }
+	async updateDepartment(departmentId, departmentData) {
+		return this.request(`/departments/${departmentId}`, {
+			method: 'PUT',
+			body: JSON.stringify(departmentData),
+		})
+	}
 
-    async deleteDepartment(departmentId) {
-        return this.request(`/departments/${departmentId}`, {
-            method: 'DELETE'
-        })
-    }
+	async deleteDepartment(departmentId) {
+		return this.request(`/departments/${departmentId}`, {
+			method: 'DELETE',
+		})
+	}
 
-    async getEmployees() {
-        return this.request('/users/employees')
-    }
+	async getEmployees() {
+		return this.request('/users/employees')
+	}
 
-    // утилиты
-    isAuthenticated() {
-        return !!this.token && !!localStorage.getItem('user_data')
-    }
+	// утилиты
+	isAuthenticated() {
+		return !!this.token && !!localStorage.getItem('user_data')
+	}
 
-    getCurrentUser() {
-        const userData = localStorage.getItem('user_data')
-        return userData ? JSON.parse(userData) : null
-    }
+	getCurrentUser() {
+		const userData = localStorage.getItem('user_data')
+		return userData ? JSON.parse(userData) : null
+	}
 
-    // создание тестового админа
-    async createTestAdmin() {
-        return this.request('/test/create-admin', {
-            method: 'POST'
-        })
-    }
+	// создание тестового админа
+	async createTestAdmin() {
+		return this.request('/test/create-admin', {
+			method: 'POST',
+		})
+	}
 }
 
 export default new ApiClient()

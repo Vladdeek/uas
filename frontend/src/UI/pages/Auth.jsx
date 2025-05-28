@@ -59,7 +59,8 @@ const Auth = () => {
 					setRegisterValid(username.trim() && password.trim())
 					break
 				case 4:
-					const hasNames = surname.trim() && nameUser.trim() && patronymic.trim()
+					const hasNames =
+						surname.trim() && nameUser.trim() && patronymic.trim()
 					const hasBirthDate = birthDate && birthDate.day && birthDate.year
 					const hasGender = gender.trim()
 					setRegisterValid(hasNames && hasBirthDate && hasGender)
@@ -71,14 +72,30 @@ const Auth = () => {
 					setRegisterValid(false)
 			}
 		}
-	}, [isLogin, regStep, email, password, username, code, surname, nameUser, patronymic, birthDate, gender, student, teacher, worker, schoolboy])
+	}, [
+		isLogin,
+		regStep,
+		email,
+		password,
+		username,
+		code,
+		surname,
+		nameUser,
+		patronymic,
+		birthDate,
+		gender,
+		student,
+		teacher,
+		worker,
+		schoolboy,
+	])
 
-	const showError = (message) => {
+	const showError = message => {
 		setError(message)
 		setTimeout(() => setError(''), 5000)
 	}
 
-	const showSuccess = (message) => {
+	const showSuccess = message => {
 		setSuccess(message)
 		setTimeout(() => setSuccess(''), 5000)
 	}
@@ -153,8 +170,11 @@ const Auth = () => {
 				first_name: nameUser,
 				last_name: surname,
 				middle_name: patronymic,
-				birth_date: `${birthDate.year}-${String(birthDate.month + 1).padStart(2, '0')}-${String(birthDate.day).padStart(2, '0')}`,
-				gender: gender
+				birth_date: `${birthDate.year}-${String(birthDate.month + 1).padStart(
+					2,
+					'0'
+				)}-${String(birthDate.day).padStart(2, '0')}`,
+				gender: gender,
 			}
 
 			await ApiClient.registerStep4(email, profileData)
@@ -184,7 +204,10 @@ const Auth = () => {
 
 			await ApiClient.registerComplete(email, selectedRoles)
 
-			console.log('Регистрация завершена успешно! Выбранные роли:', selectedRoles)
+			console.log(
+				'Регистрация завершена успешно! Выбранные роли:',
+				selectedRoles
+			)
 			// автоматически логинимся
 			await ApiClient.login(email, password)
 			navigate('/')

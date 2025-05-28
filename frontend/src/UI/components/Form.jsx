@@ -10,11 +10,13 @@ const Form = ({
 	form_status,
 	onDelete,
 }) => {
+	//  Состояния и ссылки
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 	const menuRef = useRef(null)
 
+	//  Обработчики событий
 	const toggleMenu = () => {
-		setIsMenuOpen(!isMenuOpen)
+		setIsMenuOpen(prev => !prev)
 	}
 
 	const handleEdit = () => {
@@ -27,7 +29,7 @@ const Form = ({
 		setIsMenuOpen(false)
 	}
 
-	// Закрытие меню при клике вне его
+	//  Закрытие меню при клике вне его
 	useEffect(() => {
 		const handleClickOutside = event => {
 			if (menuRef.current && !menuRef.current.contains(event.target)) {

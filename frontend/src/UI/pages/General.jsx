@@ -1,27 +1,40 @@
+//  React и хуки
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+//  Компоненты из текущего проекта
+import Sidebar from '../components/SideBar'
+import Form from '../components/Form'
 import SBChapter, {
 	AccordSBChapter,
 	InSBChapter,
 } from '../components/SBChapter'
-import Sidebar from '../components/SideBar'
-import { useState, useEffect } from 'react'
+
+//  Разделы (страницы/главы)
 import Profile from './chapters/Profile'
 import Applications from './chapters/Applications'
 import Report from './chapters/Report'
-import { useNavigate } from 'react-router-dom'
 import Constructor from './chapters/Constructor'
-import New from './New'
-import Form from '../components/Form'
 import Structure from './chapters/Structure.jsx'
+import New from './New'
+
+//  API / Утилиты
 import ApiClient from '../../api/api.js'
 
 const General = () => {
-	const navigate = useNavigate()
-	const [activeIndex, setActiveIndex] = useState(0)
-	const [userData, setUserData] = useState(null)
-	const [userRoles, setUserRoles] = useState([])
-	const [forms, setForms] = useState([])
-	const [loading, setLoading] = useState(true)
-	const [error, setError] = useState('')
+	//  UI состояния
+	const [activeIndex, setActiveIndex] = useState(0) // Текущий активный индекс
+
+	//  Состояния пользователя
+	const [userData, setUserData] = useState(null) // Данные пользователя
+	const [userRoles, setUserRoles] = useState([]) // Роли пользователя
+
+	//  Состояния форм
+	const [forms, setForms] = useState([]) // Список форм
+
+	//  Вспомогательные состояния
+	const [loading, setLoading] = useState(true) // Индикатор загрузки
+	const [error, setError] = useState('') // Сообщение об ошибке
 
 	// проверяем авторизацию при загрузке
 	useEffect(() => {
@@ -71,7 +84,7 @@ const General = () => {
 		}
 	}, [activeIndex])
 
-	const handleDeleteForm = async (formId) => {
+	const handleDeleteForm = async formId => {
 		try {
 			await ApiClient.deleteForm(formId)
 			// обновляем список форм
@@ -87,7 +100,7 @@ const General = () => {
 		navigate('/auth')
 	}
 
-	const hasRole = (requiredRoles) => {
+	const hasRole = requiredRoles => {
 		return requiredRoles.some(role => userRoles.includes(role))
 	}
 
@@ -99,7 +112,16 @@ const General = () => {
 
 		const names = userData.full_name.split(' ')
 		const initials = names.slice(0, 2).join('+')
-		const colors = ['f5b7b1', 'e8daef', 'aed6f1', 'a2d9ce', 'abebc6', 'f9e79f', 'fad7a0', 'edbb99']
+		const colors = [
+			'f5b7b1',
+			'e8daef',
+			'aed6f1',
+			'a2d9ce',
+			'abebc6',
+			'f9e79f',
+			'fad7a0',
+			'edbb99',
+		]
 		const color = colors[userData.id % colors.length]
 
 		return `https://ui-avatars.com/api/?name=${initials}&background=${color}&color=fff`
@@ -274,7 +296,9 @@ const General = () => {
 			{error && (
 				<div className='fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded z-50'>
 					{error}
-					<button onClick={() => setError('')} className='ml-2 font-bold'>×</button>
+					<button onClick={() => setError('')} className='ml-2 font-bold'>
+						×
+					</button>
 				</div>
 			)}
 
