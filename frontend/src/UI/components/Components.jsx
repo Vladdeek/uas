@@ -202,6 +202,16 @@ const CheckBox = ({ placeholder, onChange, disabled, checked }) => {
 	)
 }
 
+const ToggleBtn = ({ off, on }) => {
+	return (
+		<label for='filter' className='switch' aria-label='Toggle Filter'>
+			<input type='checkbox' id='filter' />
+			<span>{off}</span>
+			<span>{on}</span>
+		</label>
+	)
+}
+
 const Submit = ({ placeholder, disable, onClick, isAuth }) => {
 	const handleClick = e => {
 		e.preventDefault() // предотврати отправку формы и перезагрузку
@@ -292,4 +302,5 @@ export {
 	SelectInput,
 	FieldConstructInput,
 	CheckBox,
+	ToggleBtn,
 }

@@ -194,7 +194,13 @@ const General = () => {
 				)
 
 			case 3:
-				return <Schedule Month={'Май'} Today={'Сегодня среда, Май 28, 2025'} />
+				return (
+					<Schedule
+						Month={'Май'}
+						Today={'Сегодня среда, Май 28, 2025'}
+						userRoles={userRoles}
+					/>
+				)
 			case 4:
 				return <div>Учебный план</div>
 			case 5:
@@ -383,7 +389,7 @@ const General = () => {
 					<>
 						<p className='text-white font-bold text-md'>Администратор</p>
 						<SBChapter
-							icon_name='building.svg'
+							icon_name='git-fork.svg'
 							chapter_name='Структура'
 							isActive={activeIndex === 8}
 							onClick={() => setActiveIndex(8)}
