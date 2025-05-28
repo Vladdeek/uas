@@ -188,15 +188,17 @@ const SelectInput = ({ placeholder, optionsMass, onChange }) => {
 }
 const CheckBox = ({ placeholder, onChange, disabled, checked }) => {
 	return (
-		<div className='flex gap-2 items-center p-1'>
+		<label className='checkbox-container'>
 			<input
+				className='custom-checkbox'
+				checked={checked}
 				type='checkbox'
 				onChange={onChange}
 				disabled={disabled}
-				checked={checked}
 			/>
+			<span className='checkmark'></span>
 			<p className='text-lg'>{placeholder} </p>
-		</div>
+		</label>
 	)
 }
 

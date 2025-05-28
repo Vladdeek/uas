@@ -133,18 +133,6 @@ const Profile = ({
 			</div>
 			<div className='flex flex-col gap-5 rounded-xl bg-white border-1 border-gray-300 p-4 w-3/5'>
 				<div className='flex justify-between items-center'>
-					<p className='font-bold text-2xl'>Двухфакторная аутентификация </p>
-					<img className='cursor-pointer' src='icons/square-pen.svg' alt='' />
-				</div>
-				<div className='flex gap-3 text-md'>
-					<div className='w-1/2'>
-						<p>Приложение для генерации кодов </p>
-						<p className='font-bold'>Отключено </p>
-					</div>
-				</div>
-			</div>
-			<div className='flex flex-col gap-5 rounded-xl bg-white border-1 border-gray-300 p-4 w-3/5'>
-				<div className='flex justify-between items-center'>
 					<p className='font-bold text-2xl'>Социальные сети </p>
 				</div>
 				<div className='grid grid-cols-2 gap-5 text-md'>

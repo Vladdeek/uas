@@ -20,8 +20,11 @@ import New from './New'
 
 //  API / Утилиты
 import ApiClient from '../../api/api.js'
+import Loader1 from '../components/loader.jsx'
+import Schedule from './chapters/Schedule.jsx'
 
 const General = () => {
+	const navigate = useNavigate()
 	//  UI состояния
 	const [activeIndex, setActiveIndex] = useState(0) // Текущий активный индекс
 
@@ -131,7 +134,7 @@ const General = () => {
 		if (loading) {
 			return (
 				<div className='h-screen w-full flex items-center justify-center'>
-					<div className='text-xl'>Загрузка...</div>
+					<Loader1 />
 				</div>
 			)
 		}
@@ -191,7 +194,7 @@ const General = () => {
 				)
 
 			case 3:
-				return <div>Расписание</div>
+				return <Schedule Month={'Май'} Today={'Сегодня среда, Май 28, 2025'} />
 			case 4:
 				return <div>Учебный план</div>
 			case 5:
