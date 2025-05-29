@@ -206,8 +206,8 @@ const ToggleBtn = ({ off, on }) => {
 	return (
 		<label for='filter' className='switch' aria-label='Toggle Filter'>
 			<input type='checkbox' id='filter' />
-			<span>{off}</span>
-			<span>{on}</span>
+			<span className='!px-4 !pb-3 !pt-2 text-xl'>{off}</span>
+			<span className='!px-4 !pb-3 !pt-2 text-xl'>{on}</span>
 		</label>
 	)
 }
