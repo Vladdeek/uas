@@ -211,10 +211,15 @@ const CheckBox = ({ placeholder, onChange, disabled, checked }) => {
 	)
 }
 
-const ToggleBtn = ({ off, on }) => {
+const ToggleBtn = ({ off, on, onToggle }) => {
+	const handleChange = e => {
+		const checked = e.target.checked
+		onToggle(checked ? on : off) // передаём новую роль родителю
+	}
+
 	return (
-		<label for='filter' className='switch' aria-label='Toggle Filter'>
-			<input type='checkbox' id='filter' />
+		<label htmlFor='filter' className='switch' aria-label='Toggle Filter'>
+			<input type='checkbox' id='filter' onChange={handleChange} />
 			<span className='!px-4 !pb-3 !pt-2 text-xl'>{off}</span>
 			<span className='!px-4 !pb-3 !pt-2 text-xl'>{on}</span>
 		</label>
