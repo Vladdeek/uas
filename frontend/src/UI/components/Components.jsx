@@ -369,7 +369,7 @@ const Calendar = () => {
 							onClick={() => setActiveIndex(index)}
 							className={`rounded-lg h-10 w-10 flex justify-center items-center select-none
 								${isActive ? 'bg-[#c10f1a] text-white font-semibold' : 'hover:bg-gray-100'}
-								${today && !isActive ? 'border border-[#c10f1a]' : ''}
+								${today && !isActive ? 'text-[#c10f1a] font-semibold' : ''}
 							`}
 						>
 							{format(date, 'd')}
