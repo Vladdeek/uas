@@ -41,7 +41,7 @@ const ScheduleCard = ({
 				<p
 					className={`text-md font-semibold ${
 						lessonNow ? 'bg-[#ffffff33]' : 'bg-[#c10f1a]'
-					}  text-white px-4 pb-0.5 rounded-full`}
+					}  text-white px-4  rounded-full`}
 				>
 					{Auditoria}
 				</p>
@@ -91,20 +91,22 @@ const TeacherScheduleCard = ({
 					<div className='flex justify-between items-center'>
 						<div className='flex gap-1'>
 							{Group.map((group, index) => (
-								<p
-									className={`text-md font-semibold px-4 pb-0.5 rounded-full ${
-										lessonNow ? 'bg-[#ffffff33]' : 'bg-gray-200 text-gray-500'
-									} `}
-									key={index}
-								>
-									{group}
-								</p>
+								<>
+									<div
+										key={index}
+										className={`flex justify-center items-centertext-md font-semibold px-4 rounded-full ${
+											lessonNow ? 'bg-[#ffffff33]' : 'bg-gray-200 text-gray-500'
+										} `}
+									>
+										<p>{group}</p>
+									</div>
+								</>
 							))}
 						</div>
 						<p
 							className={`text-md font-semibold ${
 								lessonNow ? 'bg-[#ffffff33]' : 'bg-[#c10f1a]'
-							}  text-white px-4 pb-0.5 rounded-full`}
+							}  text-white px-4 rounded-full`}
 						>
 							{Auditoria}
 						</p>
