@@ -302,6 +302,7 @@ const Push = ({ code, setCode }) => {
 const Calendar = () => {
 	const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
 	const [currentDate, setCurrentDate] = useState(new Date())
+	const [activeIndex, setActiveIndex] = useState(null)
 
 	const start = startOfMonth(currentDate)
 	const end = endOfMonth(currentDate)
@@ -312,13 +313,13 @@ const Calendar = () => {
 
 	const prevMonth = () => {
 		setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
+		setActiveIndex(null)
 	}
 
 	const nextMonth = () => {
 		setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
+		setActiveIndex(null)
 	}
-
-	const [activeIndex, setActiveIndex] = useState(null)
 
 	return (
 		<div className='bg-white rounded-2xl p-4'>
