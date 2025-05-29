@@ -194,13 +194,7 @@ const General = () => {
 				)
 
 			case 3:
-				return (
-					<Schedule
-						Month={'Май'}
-						Today={'Сегодня среда, Май 28, 2025'}
-						userRoles={userRoles}
-					/>
-				)
+				return <Schedule userRoles={userRoles} />
 			case 4:
 				return <div>Учебный план</div>
 			case 5:

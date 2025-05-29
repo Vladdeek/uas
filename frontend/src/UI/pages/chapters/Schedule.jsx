@@ -1,4 +1,4 @@
-import { CheckBox, ToggleBtn } from '../../components/Components'
+import { Calendar, CheckBox, ToggleBtn } from '../../components/Components'
 import {
 	ScheduleTable,
 	EmptyScheduleTable,
@@ -53,8 +53,7 @@ const Schedule = ({ Month, Today, userRoles }) => {
 					</div>
 				</div>
 				<div className='w-1/4 pl-4'>
-					<p className='text-2xl font-bold'>{Month}</p>
-					<p className='text-lg font-thin'>{Today}</p>
+					<Calendar count_days={31} FromTheDay={3} />
 				</div>
 			</div>
 		</>

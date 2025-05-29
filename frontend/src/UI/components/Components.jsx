@@ -1,4 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react'
+import {
+	format,
+	startOfMonth,
+	endOfMonth,
+	getDay,
+	eachDayOfInterval,
+	isToday,
+} from 'date-fns'
+import { ru } from 'date-fns/locale'
 
 const PhoneNumInput = ({ value, onChange }) => {
 	const formatPhone = input => {
@@ -290,6 +299,87 @@ const Push = ({ code, setCode }) => {
 	)
 }
 
+const Calendar = () => {
+	const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+	const [currentDate, setCurrentDate] = useState(new Date())
+
+	const start = startOfMonth(currentDate)
+	const end = endOfMonth(currentDate)
+	const allDays = eachDayOfInterval({ start, end })
+
+	// getDay() возвращает 0 (вс)–6 (сб), нужно сместить: Пн = 1 => Вс = 7
+	const startOffset = (getDay(start) + 6) % 7 // Пример: Вт → 1, Сб → 5
+
+	const prevMonth = () => {
+		setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))
+	}
+
+	const nextMonth = () => {
+		setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))
+	}
+
+	const [activeIndex, setActiveIndex] = useState(null)
+
+	return (
+		<div className='bg-white rounded-2xl p-4'>
+			<div className='flex items-center justify-between'>
+				<img
+					onClick={prevMonth}
+					className='hover:scale-115 opacity-50 hover:opacity-100 rotate-180 transition-all cursor-pointer'
+					src='icons/chevron-right.svg'
+					alt='Previous month'
+				/>
+				<p className='text-2xl font-bold'>
+					{format(currentDate, 'LLLL yyyy', { locale: ru })}
+				</p>
+				<img
+					onClick={nextMonth}
+					className='hover:scale-115 opacity-50 hover:opacity-100 transition-all cursor-pointer'
+					src='icons/chevron-right.svg'
+					alt='Next month'
+				/>
+			</div>
+
+			<p className='text-lg font-thin'>
+				Сегодня {format(new Date(), 'EEEE, d MMMM yyyy', { locale: ru })}
+			</p>
+
+			<div className='grid grid-cols-7 gap-2 text-[#820000] mb-1 font-bold mt-2'>
+				{weekdays.map((day, index) => (
+					<div
+						className='h-10 w-10 flex justify-center items-center'
+						key={index}
+					>
+						<p>{day}</p>
+					</div>
+				))}
+			</div>
+
+			<div className='grid grid-cols-7 gap-2'>
+				{Array.from({ length: startOffset }).map((_, index) => (
+					<div key={`empty-${index}`} className='w-10 h-10'></div>
+				))}
+				{allDays.map((date, index) => {
+					const isActive = index === activeIndex
+					const today = isToday(date)
+					return (
+						<div
+							key={index}
+							onClick={() => setActiveIndex(index)}
+							className={`rounded-lg h-10 w-10 flex justify-center items-center select-none
+								${isActive ? 'bg-[#c10f1a] text-white font-semibold' : 'hover:bg-gray-100'}
+								${today && !isActive ? 'border border-[#c10f1a]' : ''}
+							`}
+						>
+							{format(date, 'd')}
+						</div>
+					)
+				})}
+			</div>
+		</div>
+	)
+}
+
 const FieldConstructInput = () => {}
 
 export {
@@ -303,4 +393,5 @@ export {
 	FieldConstructInput,
 	CheckBox,
 	ToggleBtn,
+	Calendar,
 }
