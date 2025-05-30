@@ -210,7 +210,7 @@ const Auth = () => {
 			)
 			// автоматически логинимся
 			await ApiClient.login(email, password)
-			navigate('/')
+			navigate('/main')
 		} catch (error) {
 			showError(error.message || 'Ошибка завершения регистрации')
 		} finally {
