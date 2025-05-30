@@ -8,6 +8,7 @@ const ScheduleCard = ({
 	Teacher,
 	lessonNow,
 	lessonType,
+	sub_group,
 }) => {
 	return (
 		<div
@@ -17,21 +18,31 @@ const ScheduleCard = ({
 					: 'bg-white border-l-6 border-[#c10f1a]'
 			}`}
 		>
-			<div className={lessonType.length > 0 && 'flex items-center gap-2'}>
+			<div
+				className={
+					(typeof lessonType !== 'undefined' && 'flex items-center gap-2') ||
+					(typeof sub_group !== 'undefined' && 'flex items-center gap-2')
+				}
+			>
 				<p
 					className={`text-2xl font-semibold ${
-						lessonType.length > 0 && 'pb-1'
+						typeof lessonType !== 'undefined' && 'pb-1'
 					}`}
 				>
 					{LessonName}
 				</p>
-				{lessonType.length > 0 && (
+				{typeof lessonType !== 'undefined' && (
 					<p
 						className={`text-md font-semibold px-4 pb-0.5 rounded-full ${
 							lessonNow ? 'bg-[#ffffff33]' : 'bg-gray-200 text-gray-500'
 						} `}
 					>
 						{lessonType}
+					</p>
+				)}
+				{typeof sub_group !== 'undefined' && (
+					<p className={lessonNow ? 'text-white' : 'text-gray-500'}>
+						{sub_group} пг.
 					</p>
 				)}
 			</div>
@@ -57,6 +68,7 @@ const TeacherScheduleCard = ({
 	Group,
 	lessonNow,
 	lessonType,
+	sub_group,
 }) => {
 	return (
 		<>
@@ -102,6 +114,11 @@ const TeacherScheduleCard = ({
 									</div>
 								</>
 							))}
+							{typeof sub_group !== 'undefined' && (
+								<p className={lessonNow ? 'text-white' : 'text-gray-500'}>
+									{sub_group} пг.
+								</p>
+							)}
 						</div>
 						<p
 							className={`text-md font-semibold ${

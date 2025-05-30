@@ -67,9 +67,16 @@ const Schedule = ({ Month, Today, userRoles }) => {
 										<ScheduleCard
 											LessonName={'Анализ данных на языке Python'}
 											LessonTime={'15:30 - 16:50'}
-											lessonType={''}
 											Teacher={'Мозговенко А. А.'}
 											Auditoria={'7.308'}
+											sub_group={1}
+										/>
+										<ScheduleCard
+											LessonName={'Технологии WEB-Разработки'}
+											LessonTime={'8:00 - 9:20'}
+											Teacher={'Букреев Д. А.'}
+											Auditoria={'7.308'}
+											sub_group={2}
 										/>
 									</ScheduleTable>
 									<ScheduleTable LessonTime={'17:00 - 18:20'}>
@@ -97,7 +104,7 @@ const Schedule = ({ Month, Today, userRoles }) => {
 											LessonTime={'9:30 - 11:00'}
 											Auditoria={'7.203'}
 											lessonType={'Лекция'}
-											Group={['31 ИТ', '32 ИТ', '33 ИТ']}
+											Group={['31 ИТ', '32 ИТ']}
 										/>
 									</ScheduleTable>
 
@@ -105,7 +112,14 @@ const Schedule = ({ Month, Today, userRoles }) => {
 										<EmptyScheduleTable />
 									</ScheduleTable>
 									<ScheduleTable LessonTime={'12:30 - 13:50'}>
-										<EmptyScheduleTable />
+										<TeacherScheduleCard
+											LessonName={'Технологии WEB-Разработки'}
+											LessonTime={'12:30 - 13:50'}
+											Auditoria={'7.203'}
+											lessonType={'Лекция'}
+											Group={['31 ИТ']}
+											sub_group={2}
+										/>
 									</ScheduleTable>
 									<ScheduleTable LessonTime={'14:00 - 15:20'}>
 										<EmptyScheduleTable />
