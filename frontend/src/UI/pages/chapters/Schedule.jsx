@@ -163,7 +163,7 @@ const Schedule = ({ Month, Today, userRoles }) => {
 					</div>
 				</div>
 				<div className='w-1/4 pl-4'>
-					<Calendar count_days={31} FromTheDay={3} />
+					<Calendar />
 				</div>
 			</div>
 		</>
