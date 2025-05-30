@@ -38,7 +38,7 @@ const Schedule = ({ Month, Today, userRoles }) => {
 			role: 'Студент',
 		},
 		{
-			lessonTime: 6,
+			lessonTime: 5,
 			LessonName: 'Анализ данных на языке Python',
 			Teacher: 'Мозговенко А. А.',
 			Auditoria: '7.308',
