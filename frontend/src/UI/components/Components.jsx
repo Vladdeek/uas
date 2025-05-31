@@ -171,24 +171,24 @@ const DateInput = ({ onChange }) => {
 	)
 }
 
-const SelectInput = ({ placeholder, optionsMass, onChange }) => {
-	const [value, setValue] = useState(optionsMass[0])
-
-	useEffect(() => {
-		onChange?.(value)
-	}, [value])
+const SelectInput = ({ placeholder, options = [], optionsMass = [], value, onChange }) => {
+	// Преобразуем старый формат в новый, если используется optionsMass
+	const normalizedOptions = optionsMass.length > 0 
+		? optionsMass.map(opt => ({ value: opt, label: opt }))
+		: options;
 
 	return (
 		<div className='flex flex-col w-full'>
 			<p className='ml-3 text-lg'>{placeholder}</p>
 			<select
-				value={value}
-				onChange={e => setValue(e.target.value)}
+				value={value || ''}
+				onChange={(e) => onChange?.(e.target.value)}
 				className='pl-2 text-xl flex-1 px-1 py-2 outline-none border-b-2 border-gray-300'
 			>
-				{optionsMass.map((option, index) => (
-					<option key={index} value={option}>
-						{option}
+				<option value=''>{placeholder}</option>
+				{normalizedOptions.map((option) => (
+					<option key={option.value} value={option.value}>
+						{option.label}
 					</option>
 				))}
 			</select>

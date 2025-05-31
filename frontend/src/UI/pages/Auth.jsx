@@ -43,6 +43,13 @@ const Auth = () => {
 	const [worker, setWorker] = useState(false)
 	const [schoolboy, setSchoolboy] = useState(false)
 
+	// Проверка авторизации при монтировании компонента
+	useEffect(() => {
+		if (ApiClient.isAuthenticated()) {
+			navigate('/main')
+		}
+	}, [navigate])
+
 	// валидация в зависимости от шага
 	useEffect(() => {
 		if (isLogin) {
@@ -61,7 +68,12 @@ const Auth = () => {
 				case 4:
 					const hasNames =
 						surname.trim() && nameUser.trim() && patronymic.trim()
-					const hasBirthDate = birthDate && birthDate.day && birthDate.year
+					const hasBirthDate = birthDate && 
+						birthDate.day && 
+						typeof birthDate.month === 'number' && 
+						birthDate.year &&
+						birthDate.year >= 1900 && 
+						birthDate.year <= new Date().getFullYear()
 					const hasGender = gender.trim()
 					setRegisterValid(hasNames && hasBirthDate && hasGender)
 					break
@@ -107,7 +119,7 @@ const Auth = () => {
 		try {
 			const response = await ApiClient.login(email, password)
 			console.log('Успешная авторизация:', response.user)
-			navigate('/')
+			navigate('/main')
 		} catch (error) {
 			showError(error.message || 'Ошибка авторизации')
 		} finally {
@@ -123,6 +135,8 @@ const Auth = () => {
 			await ApiClient.registerStep1(email)
 			setRegStep(2)
 			setRegisterValid(false)
+			setError('')
+			showSuccess('Код подтверждения отправлен на ваш email')
 		} catch (error) {
 			showError(error.message || 'Ошибка отправки кода')
 		} finally {
@@ -139,6 +153,8 @@ const Auth = () => {
 			await ApiClient.verifyCode(email, codeString)
 			setRegStep(3)
 			setRegisterValid(false)
+			setError('')
+			showSuccess('Код успешно подтвержден')
 		} catch (error) {
 			showError(error.message || 'Неверный код')
 		} finally {
@@ -149,11 +165,18 @@ const Auth = () => {
 	const handleRegStep3 = async () => {
 		if (!registerValid) return
 
+		if (password.length < 6) {
+			showError('Пароль должен содержать минимум 6 символов')
+			return
+		}
+
 		setLoading(true)
 		try {
 			await ApiClient.registerStep3(email, username, password)
 			setRegStep(4)
 			setRegisterValid(false)
+			setError('')
+			showSuccess('Данные успешно сохранены')
 		} catch (error) {
 			showError(error.message || 'Ошибка сохранения данных')
 		} finally {
@@ -170,16 +193,20 @@ const Auth = () => {
 				first_name: nameUser,
 				last_name: surname,
 				middle_name: patronymic,
-				birth_date: `${birthDate.year}-${String(birthDate.month + 1).padStart(
-					2,
-					'0'
-				)}-${String(birthDate.day).padStart(2, '0')}`,
+				birth_date: `${birthDate.year}-${String(birthDate.month + 1).padStart(2, '0')}-${String(birthDate.day).padStart(2, '0')}`,
 				gender: gender,
+			}
+
+			const birthDateObj = new Date(profileData.birth_date)
+			if (isNaN(birthDateObj.getTime())) {
+				throw new Error('Некорректная дата рождения')
 			}
 
 			await ApiClient.registerStep4(email, profileData)
 			setRegStep(5)
 			setRegisterValid(false)
+			setError('')
+			showSuccess('Профиль успешно сохранен')
 		} catch (error) {
 			showError(error.message || 'Ошибка сохранения профиля')
 		} finally {
@@ -196,21 +223,26 @@ const Auth = () => {
 			if (student) selectedRoles.push('Студент')
 			if (teacher) {
 				selectedRoles.push('Преподаватель')
-				selectedRoles.push('Сотрудник') // автоматически добавляем сотрудника для преподавателя
+				selectedRoles.push('Сотрудник')
 			} else if (worker) {
-				selectedRoles.push('Сотрудник') // добавляем сотрудника если выбран отдельно
+				selectedRoles.push('Сотрудник')
 			}
 			if (schoolboy) selectedRoles.push('Школьник')
 
-			await ApiClient.registerComplete(email, selectedRoles)
+			if (selectedRoles.length === 0) {
+				throw new Error('Выберите хотя бы одну роль')
+			}
 
-			console.log(
-				'Регистрация завершена успешно! Выбранные роли:',
-				selectedRoles
-			)
-			// автоматически логинимся
-			await ApiClient.login(email, password)
-			navigate('/main')
+			await ApiClient.registerComplete(email, selectedRoles)
+			setError('')
+			showSuccess('Регистрация успешно завершена!')
+
+			const loginResponse = await ApiClient.login(email, password)
+			if (loginResponse.access_token) {
+				navigate('/main')
+			} else {
+				throw new Error('Ошибка автоматического входа')
+			}
 		} catch (error) {
 			showError(error.message || 'Ошибка завершения регистрации')
 		} finally {
@@ -397,7 +429,10 @@ const Auth = () => {
 								<DateInput onChange={setBirthDate} />
 								<SelectInput
 									placeholder='Пол'
-									optionsMass={['Мужской', 'Женский']}
+									options={[
+										{ value: 'Мужской', label: 'Мужской' },
+										{ value: 'Женский', label: 'Женский' }
+									]}
 									onChange={setGender}
 								/>
 								<Submit

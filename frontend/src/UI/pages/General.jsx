@@ -9,6 +9,8 @@ import SBChapter, {
 	AccordSBChapter,
 	InSBChapter,
 } from '../components/SBChapter'
+import Modal from '../components/Modal'
+import ModalButton from '../components/ModalButton'
 
 //  Разделы (страницы/главы)
 import Profile from './chapters/Profile'
@@ -17,16 +19,18 @@ import Report from './chapters/Report'
 import Constructor from './chapters/Constructor'
 import Structure from './chapters/Structure.jsx'
 import New from './New'
+import UsersAndRoles from './chapters/UsersAndRoles'
 
 //  API / Утилиты
 import ApiClient from '../../api/api.js'
-import Loader1 from '../components/loader.jsx'
+import Loader1 from '../components/Loader.jsx'
 import Schedule from './chapters/Schedule.jsx'
 
 const General = () => {
 	const navigate = useNavigate()
 	//  UI состояния
 	const [activeIndex, setActiveIndex] = useState(0) // Текущий активный индекс
+	const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
 
 	//  Состояния пользователя
 	const [userData, setUserData] = useState(null) // Данные пользователя
@@ -39,16 +43,40 @@ const General = () => {
 	const [loading, setLoading] = useState(true) // Индикатор загрузки
 	const [error, setError] = useState('') // Сообщение об ошибке
 
-	// проверяем авторизацию при загрузке
+	// Проверка авторизации и загрузка данных
 	useEffect(() => {
-		if (!ApiClient.isAuthenticated()) {
-			navigate('/auth')
-			return
+		const checkAuthAndLoadData = async () => {
+			try {
+				if (!ApiClient.isAuthenticated()) {
+					navigate('/auth')
+					return
+				}
+
+				await loadUserData()
+				await loadForms()
+				setLoading(false)
+			} catch (error) {
+				console.error('Ошибка при загрузке данных:', error)
+				// Проверяем все возможные случаи потери сессии
+				if (
+					error.response?.status === 401 ||
+					error.message.includes('401') ||
+					error.message.includes('токен') ||
+					error.message.includes('unauthorized') ||
+					error.message.includes('не авторизован')
+				) {
+					await ApiClient.logout()
+					navigate('/auth')
+					return
+				}
+				setError('Ошибка при загрузке данных')
+			} finally {
+				setLoading(false)
+			}
 		}
 
-		loadUserData()
-		loadForms()
-	}, [])
+		checkAuthAndLoadData()
+	}, [navigate])
 
 	const loadUserData = async () => {
 		try {
@@ -57,13 +85,19 @@ const General = () => {
 			setUserRoles(profile.roles || [])
 		} catch (error) {
 			console.error('Ошибка загрузки профиля:', error)
-			// если токен невалидный, перенаправляем на авторизацию
-			if (error.message.includes('401') || error.message.includes('токен')) {
+			// Проверяем все возможные случаи потери сессии
+			if (
+				error.response?.status === 401 ||
+				error.message.includes('401') ||
+				error.message.includes('токен') ||
+				error.message.includes('unauthorized') ||
+				error.message.includes('не авторизован')
+			) {
 				await ApiClient.logout()
 				navigate('/auth')
+				return
 			}
-		} finally {
-			setLoading(false)
+			throw error // Пробрасываем ошибку дальше для общей обработки
 		}
 	}
 
@@ -73,6 +107,18 @@ const General = () => {
 			setForms(formsData)
 		} catch (error) {
 			console.error('Ошибка загрузки форм:', error)
+			// Проверяем все возможные случаи потери сессии
+			if (
+				error.response?.status === 401 ||
+				error.message.includes('401') ||
+				error.message.includes('токен') ||
+				error.message.includes('unauthorized') ||
+				error.message.includes('не авторизован')
+			) {
+				await ApiClient.logout()
+				navigate('/auth')
+				return
+			}
 			// если нет прав доступа - не показываем ошибку
 			if (!error.message.includes('Недостаточно прав')) {
 				setError('Ошибка загрузки данных')
@@ -98,9 +144,18 @@ const General = () => {
 		}
 	}
 
-	const handleLogout = async () => {
+	const handleLogoutClick = () => {
+		setIsLogoutModalOpen(true)
+	}
+
+	const handleLogoutConfirm = async () => {
 		await ApiClient.logout()
+		setIsLogoutModalOpen(false)
 		navigate('/auth')
+	}
+
+	const handleLogoutCancel = () => {
+		setIsLogoutModalOpen(false)
 	}
 
 	const hasRole = requiredRoles => {
@@ -281,6 +336,17 @@ const General = () => {
 						</div>
 					</div>
 				)
+			case 12:
+				return hasRole(['Админ']) ? (
+					<UsersAndRoles />
+				) : (
+					<div className='h-screen w-full flex items-center justify-center text-3xl'>
+						<div className='flex gap-2 items-center'>
+							<p className='pb-1'>Доступ запрещен</p>
+							<img className='h-full' src='icons/ban.svg' alt='' />
+						</div>
+					</div>
+				)
 			default:
 				return null
 		}
@@ -288,14 +354,52 @@ const General = () => {
 
 	if (loading) {
 		return (
-			<div className='h-screen w-full flex items-center justify-center'>
-				<div className='text-xl'>Загрузка профиля...</div>
+			<div className='w-screen h-screen flex items-center justify-center bg-white'>
+				<div className='transition-opacity duration-300 ease-in-out'>
+					<Loader1 />
+				</div>
+			</div>
+		)
+	}
+
+	if (error) {
+		return (
+			<div className='w-screen h-screen flex items-center justify-center bg-white'>
+				<div className='text-red-500 transition-opacity duration-300 ease-in-out'>
+					{error}
+				</div>
 			</div>
 		)
 	}
 
 	return (
-		<>
+		<div className='transition-opacity duration-300 ease-in-out'>
+			<Modal
+				isOpen={isLogoutModalOpen}
+				onClose={handleLogoutCancel}
+				title='Подтверждение выхода'
+				buttons={
+					<>
+						<ModalButton
+							variant='secondary'
+							onClick={handleLogoutCancel}
+						>
+							Отмена
+						</ModalButton>
+						<ModalButton
+							variant='danger'
+							onClick={handleLogoutConfirm}
+						>
+							Выйти
+						</ModalButton>
+					</>
+				}
+			>
+				<p className='text-center text-gray-600'>
+					Вы действительно хотите выйти из системы?
+				</p>
+			</Modal>
+
 			{error && (
 				<div className='fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded z-50'>
 					{error}
@@ -306,7 +410,7 @@ const General = () => {
 			)}
 
 			<Sidebar
-				username={userData?.full_name?.split(' ') || ['Пользователь']}
+				username={userData?.full_name ? userData.full_name.split(' ') : [userData?.username || 'Пользователь']}
 				role={userRoles.join(', ') || 'Не определена'}
 				img_path={getAvatar()}
 			>
@@ -389,6 +493,12 @@ const General = () => {
 							onClick={() => setActiveIndex(8)}
 						/>
 						<SBChapter
+							icon_name='users.svg'
+							chapter_name='Пользователи и роли'
+							isActive={activeIndex === 12}
+							onClick={() => setActiveIndex(12)}
+						/>
+						<SBChapter
 							icon_name='clipboard-check.svg'
 							chapter_name='Конструктор заявок'
 							isActive={activeIndex === 10 || activeIndex === 11}
@@ -407,12 +517,14 @@ const General = () => {
 					icon_name='log-out.svg'
 					chapter_name='Выйти'
 					isActive={activeIndex === 100}
-					onClick={handleLogout}
+					onClick={handleLogoutClick}
 				/>
 			</Sidebar>
 
-			<main className='ml-96 p-4'>{renderContent()}</main>
-		</>
+			<main className='ml-96 p-4 transition-all duration-300 ease-in-out'>
+				{renderContent()}
+			</main>
+		</div>
 	)
 }
 

@@ -1,6 +1,6 @@
 const Loader1 = () => {
 	return (
-		<div class='honeycomb'>
+		<div className='honeycomb'>
 			<div></div>
 			<div></div>
 			<div></div>
