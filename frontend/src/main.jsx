@@ -9,7 +9,7 @@ import {
 import './styles.css'
 import Auth from './UI/pages/Auth.jsx'
 import DashboardLayout from './UI/pages/layout/DashboardLayout.jsx'
-import Loader from './UI/components/loader.jsx'
+import Loader from './UI/components/Loader.jsx'
 
 /* ---- ленивые страницы (бывшие case-ветки) ---- */
 const Profile = lazy(() => import('./UI/pages/chapters/Profile.jsx'))

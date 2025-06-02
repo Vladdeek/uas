@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import ApiClient from '../../../api/api.js'
+import Loader from '../../components/Loader.jsx'
 const Profile = ({}) => {
 	const [userData, setUserData] = useState(null) // Данные пользователя
 	const [userRoles, setUserRoles] = useState([]) // Роли пользователя
+	const [loading, setLoading] = useState(true) // Индикатор загрузки
 
 	useEffect(() => {
 		const loadUserData = async () => {
@@ -48,6 +50,13 @@ const Profile = ({}) => {
 	// Функция проверки ролей
 	const hasRole = requiredRoles => {
 		return requiredRoles.some(role => userRoles.includes(role))
+	}
+	if (loading) {
+		return (
+			<div className='h-screen w-full flex items-center justify-center'>
+				<Loader />
+			</div>
+		)
 	}
 	return (
 		<div className='flex flex-col gap-10 items-center w-full pt-15'>
