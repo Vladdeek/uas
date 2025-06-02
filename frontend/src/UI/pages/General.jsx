@@ -14,7 +14,7 @@ import SBChapter, {
 import Profile from './chapters/Profile'
 import Applications from './chapters/Applications'
 import Report from './chapters/Report'
-import Constructor from './chapters/Constructor'
+import Constructor from './chapters/ConstructorApplications.jsx'
 import New from './New'
 
 //  API / Утилиты
@@ -26,7 +26,6 @@ import { AccessDenied } from '../components/Components.jsx'
 const General = () => {
 	const navigate = useNavigate()
 	//  UI состояния
-	const [activeIndex, setActiveIndex] = useState(0)
 
 	//  Состояния пользователя
 	const [userData, setUserData] = useState(null) // Данные пользователя

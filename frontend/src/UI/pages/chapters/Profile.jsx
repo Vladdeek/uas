@@ -1,13 +1,50 @@
-const Profile = ({
-	img_path,
-	FullName,
-	username,
-	role,
-	BirthDate,
-	email,
-	phone,
-	userRoles,
-}) => {
+import { useState, useEffect } from 'react'
+import ApiClient from '../../../api/api.js'
+const Profile = ({}) => {
+	const [userData, setUserData] = useState(null) // Данные пользователя
+	const [userRoles, setUserRoles] = useState([]) // Роли пользователя
+
+	useEffect(() => {
+		const loadUserData = async () => {
+			try {
+				const profile = await ApiClient.getUserProfile()
+				setUserData(profile)
+				setUserRoles(profile.roles || [])
+			} catch (error) {
+				console.error('Ошибка загрузки профиля:', error)
+				if (error.message.includes('401') || error.message.includes('токен')) {
+					await ApiClient.logout()
+					navigate('/auth')
+				}
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		loadUserData()
+	}, [])
+
+	const getAvatar = () => {
+		if (!userData || !userData.full_name) {
+			return 'https://ui-avatars.com/api/?name=User&background=f5b7b1&color=fff'
+		}
+
+		const names = userData.full_name.split(' ')
+		const initials = names.slice(0, 2).join('+')
+		const colors = [
+			'f5b7b1',
+			'e8daef',
+			'aed6f1',
+			'a2d9ce',
+			'abebc6',
+			'f9e79f',
+			'fad7a0',
+			'edbb99',
+		]
+		const color = colors[userData.id % colors.length]
+
+		return `https://ui-avatars.com/api/?name=${initials}&background=${color}&color=fff`
+	}
 	// Функция проверки ролей
 	const hasRole = requiredRoles => {
 		return requiredRoles.some(role => userRoles.includes(role))
@@ -19,11 +56,13 @@ const Profile = ({
 					<p className='font-bold text-2xl'>Основная информация</p>
 				</div>
 				<div className='flex gap-3'>
-					<img className='rounded-full' src={img_path} alt='' />
+					<img className='rounded-full' src={getAvatar()} alt='' />
 					<div className='flex flex-col'>
-						<p className='font-bold text-xl'>{FullName}</p>
-						<p className='font-semibold'>{role}</p>
-						<p className='font-thin'>{BirthDate}</p>
+						<p className='font-bold text-xl'>
+							{userData?.full_name || 'Пользователь'}
+						</p>
+						<p className='font-semibold'>{userRoles.join(', ')}</p>
+						<p className='font-thin'>{userData?.birth_date || 'Не указано'}</p>
 					</div>
 				</div>
 			</div>
@@ -111,11 +150,13 @@ const Profile = ({
 				<div className='flex gap-3 text-md'>
 					<div className='w-1/2'>
 						<p>Основной email:</p>
-						<p className='font-bold'>{email}</p>
+						<p className='font-bold'>
+							{userData?.email || 'email@example.com'}
+						</p>
 					</div>
 					<div className='w-1/2'>
 						<p>Основной телефон:</p>
-						<p className='font-bold'>{phone}</p>
+						<p className='font-bold'>{userData?.phone || 'Не указан'}</p>
 					</div>
 				</div>
 			</div>

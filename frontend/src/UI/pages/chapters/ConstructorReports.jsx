@@ -1,6 +1,12 @@
 import { Children } from 'react'
 
-const Constructor = ({ onClick, ConstName, ConstBtn, children, type }) => {
+const ConstructorReports = ({
+	onClick,
+	ConstName,
+	ConstBtn,
+	children,
+	type,
+}) => {
 	return (
 		<>
 			<div className=' items-center w-full'>
@@ -26,4 +32,4 @@ const Constructor = ({ onClick, ConstName, ConstBtn, children, type }) => {
 		</>
 	)
 }
-export default Constructor
+export default ConstructorReports
