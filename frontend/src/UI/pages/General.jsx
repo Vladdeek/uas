@@ -21,11 +21,12 @@ import New from './New'
 import ApiClient from '../../api/api.js'
 import Loader1 from '../components/loader.jsx'
 import Schedule from './chapters/Schedule.jsx'
+import { AccessDenied } from '../components/Components.jsx'
 
 const General = () => {
 	const navigate = useNavigate()
 	//  UI состояния
-	const [activeIndex, setActiveIndex] = useState(0) // Текущий активный индекс
+	const [activeIndex, setActiveIndex] = useState(0)
 
 	//  Состояния пользователя
 	const [userData, setUserData] = useState(null) // Данные пользователя
@@ -184,12 +185,7 @@ const General = () => {
 						))}
 					</Constructor>
 				) : (
-					<div className='h-screen w-full flex items-center justify-center text-3xl select-none cursor-default'>
-						<div className='flex gap-2 items-center '>
-							<p className='pb-1'>Доступ запрещен</p>
-							<img className='h-full' src='icons/ban.svg' alt='' />
-						</div>
-					</div>
+					<AccessDenied />
 				)
 
 			case 3:
@@ -203,16 +199,7 @@ const General = () => {
 			case 7:
 				return <Report chap={'Все отчеты'} />
 			case 8:
-				return hasRole(['Админ']) ? (
-					<Structure />
-				) : (
-					<div className='h-screen w-full flex items-center justify-center text-3xl'>
-						<div className='flex gap-2 items-center'>
-							<p className='pb-1'>Доступ запрещен</p>
-							<img className='h-full' src='icons/ban.svg' alt='' />
-						</div>
-					</div>
-				)
+				return hasRole(['Админ']) ? <Structure /> : <AccessDenied />
 			case 9:
 				return hasRole(['Админ']) ? (
 					<New
@@ -221,12 +208,7 @@ const General = () => {
 						setForms={setForms}
 					/>
 				) : (
-					<div className='h-screen w-full flex items-center justify-center text-3xl select-none cursor-default'>
-						<div className='flex gap-2 items-center '>
-							<p className='pb-1'>Доступ запрещен</p>
-							<img className='h-full' src='icons/ban.svg' alt='' />
-						</div>
-					</div>
+					<AccessDenied />
 				)
 			case 10:
 				return hasRole(['Админ']) ? (
@@ -258,12 +240,7 @@ const General = () => {
 						))}
 					</Constructor>
 				) : (
-					<div className='h-screen w-full flex items-center justify-center text-3xl'>
-						<div className='flex gap-2 items-center'>
-							<p className='pb-1'>Доступ запрещен</p>
-							<img className='h-full' src='icons/ban.svg' alt='' />
-						</div>
-					</div>
+					<AccessDenied />
 				)
 			case 11:
 				return hasRole(['Админ']) ? (
@@ -273,12 +250,7 @@ const General = () => {
 						setForms={setForms}
 					/>
 				) : (
-					<div className='h-screen w-full flex items-center justify-center text-3xl'>
-						<div className='flex gap-2 items-center'>
-							<p className='pb-1'>Доступ запрещен</p>
-							<img className='h-full' src='icons/ban.svg' alt='' />
-						</div>
-					</div>
+					<AccessDenied />
 				)
 			default:
 				return null

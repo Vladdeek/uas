@@ -400,6 +400,15 @@ const Calendar = () => {
 	)
 }
 
+const AccessDenied = () => (
+	<div className='h-screen w-full flex items-center justify-center text-3xl select-none cursor-default'>
+		<div className='flex gap-2 items-center'>
+			<p className='pb-1'>Доступ запрещен</p>
+			<img className='h-full' src='icons/ban.svg' alt='access denied' />
+		</div>
+	</div>
+)
+
 const FieldConstructInput = () => {}
 
 export {
@@ -414,4 +423,5 @@ export {
 	CheckBox,
 	ToggleBtn,
 	Calendar,
+	AccessDenied,
 }
