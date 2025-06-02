@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import Sidebar from '../../components/SideBar.jsx'
+import Sidebar, { SBLink, SBLinkButton } from '../../components/SideBar.jsx'
 import ApiClient from '../../../api/api.js'
 import Loader from '../../components/Loader.jsx'
 
@@ -58,67 +58,86 @@ export default function DashboardLayout() {
 				img_path={getAvatar()}
 			>
 				{/* ----------- ссылки вместо onClick ----------- */}
-				<NavLink to='profile' className='sb-link'>
-					Профиль
-				</NavLink>
+				<SBLink
+					to={'profile'}
+					icon_name={'user.svg'}
+					chapter_name={'Профиль'}
+				/>
 
 				{has('Сотрудник') && (
 					<>
-						<NavLink to='applications' className='sb-link'>
-							Заявки
-						</NavLink>
-						<NavLink to='reports' className='sb-link'>
-							Отчёты
-						</NavLink>
+						<SBLink
+							to={'applications'}
+							icon_name={'clipboard-check.svg'}
+							chapter_name={'Заявки'}
+						/>
+						<SBLink
+							to={'reports'}
+							icon_name={'file-text.svg'}
+							chapter_name={'Отчёты'}
+						/>
 					</>
 				)}
 
 				{has('Студент') && (
 					<>
-						<NavLink to='schedule' className='sb-link'>
-							Расписание
-						</NavLink>
-						<NavLink to='plan' className='sb-link'>
-							Учебный план
-						</NavLink>
+						<SBLink
+							to={'schedule'}
+							icon_name={'calendar-days.svg'}
+							chapter_name={'Расписание'}
+						/>
+						<SBLink
+							to={'plan'}
+							icon_name={'book-open-text.svg'}
+							chapter_name={'Учебный план'}
+						/>
 					</>
 				)}
 
 				{has('Преподаватель') && (
-					<NavLink to='load' className='sb-link'>
-						Нагрузка
-					</NavLink>
+					<SBLink
+						to={'load'}
+						icon_name={'file-chart-column.svg'}
+						chapter_name={'Нагрузка'}
+					/>
 				)}
 
 				{roles.length > 0 && (
-					<NavLink to='news' className='sb-link'>
-						Новости
-					</NavLink>
+					<SBLink
+						to={'news'}
+						icon_name={'newspaper.svg'}
+						chapter_name={'Новости'}
+					/>
 				)}
 
 				{has('Админ') && (
 					<>
-						<NavLink to='structure' className='sb-link'>
-							Структура
-						</NavLink>
-						<NavLink to='constructor/reports' className='sb-link'>
-							Конструктор отчётов
-						</NavLink>
-						<NavLink to='constructor/applications' className='sb-link'>
-							Конструктор заявок
-						</NavLink>
+						<SBLink
+							to={'structure'}
+							icon_name={'git-fork.svg'}
+							chapter_name={'Структура'}
+						/>
+						<SBLink
+							to={'constructor/applications'}
+							icon_name={'clipboard-check.svg'}
+							chapter_name={'Конструктор заявок'}
+						/>
+						<SBLink
+							to={'constructor/reports'}
+							icon_name={'file-text.svg'}
+							chapter_name={'Конструктор отчётов'}
+						/>
 					</>
 				)}
 
-				<button
+				<SBLinkButton
 					onClick={async () => {
 						await ApiClient.logout()
 						navigate('/auth')
 					}}
-					className='sb-link'
-				>
-					Выйти
-				</button>
+					icon_name='log-out.svg'
+					chapter_name='Выйти'
+				/>
 			</Sidebar>
 
 			<main className='ml-96 p-4'>
