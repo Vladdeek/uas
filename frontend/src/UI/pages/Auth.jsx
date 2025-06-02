@@ -50,13 +50,15 @@ const Auth = () => {
 		} else {
 			switch (regStep) {
 				case 1:
-					setRegisterValid(email.trim() && email.includes('@'))
+					setRegisterValid(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
 					break
 				case 2:
 					setRegisterValid(code.every(digit => digit !== ''))
 					break
 				case 3:
-					setRegisterValid(username.trim() && password.trim())
+					const isUsernameValid = username.trim() !== ''
+					const isPasswordValid = /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)
+					setRegisterValid(isUsernameValid && isPasswordValid)
 					break
 				case 4:
 					const hasNames =
@@ -413,7 +415,7 @@ const Auth = () => {
 									<p className='text-center text-xl font-normal mb-4'>
 										Выбор роли
 									</p>
-									<div className='bg-[#fafafa] rounded-xl mx-auto p-3 border-1 border-gray-300'>
+									<div className='bg-[#fafafa] flex flex-col rounded-xl mx-auto p-3 border-1 border-gray-300'>
 										<CheckBox
 											placeholder={'Студент'}
 											disabled={schoolboy}

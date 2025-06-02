@@ -1,7 +1,7 @@
-const url = ['http://81.200.144.179:5000/api', 'http://localhost:5000/api']
+const url = ['http://localhost:5000/api', 'http://82.202.130.12:5000/api']
 
 // API клиент для работы с бэкендом
-const API_BASE_URL = url[0]
+const API_BASE_URL = url[1]
 
 class ApiClient {
 	constructor() {
@@ -9,36 +9,44 @@ class ApiClient {
 	}
 
 	// базовый метод для запросов
-	async request(endpoint, options = {}) {
-		const url = `${API_BASE_URL}${endpoint}`
+	async request(endpoint, options = {}, retry = true) {
+	const url = `${API_BASE_URL}${endpoint}`
 
-		const config = {
-			headers: {
-				'Content-Type': 'application/json',
-				...options.headers,
-			},
-			...options,
-		}
-
-		// добавляем токен если есть
-		if (this.token) {
-			config.headers.Authorization = `Bearer ${this.token}`
-		}
-
-		try {
-			const response = await fetch(url, config)
-			const data = await response.json()
-
-			if (!response.ok) {
-				throw new Error(data.error || 'Ошибка API')
-			}
-
-			return data
-		} catch (error) {
-			console.error('API Error:', error)
-			throw error
-		}
+	const config = {
+		headers: {
+			'Content-Type': 'application/json',
+			...options.headers,
+		},
+		...options,
 	}
+
+	// ✅ добавляем токен
+	if (this.token) {
+		config.headers.Authorization = `Bearer ${this.token}`
+		console.log("🔐 Using token:", this.token)
+	}
+
+	try {
+		const response = await fetch(url, config)
+		const data = await response.json()
+
+		if (!response.ok) {
+			if (response.status === 401 && retry) {
+				console.warn('🔁 Токен истёк. Пытаемся обновить...')
+				await this.refreshToken()
+				return this.request(endpoint, options, false)
+			}
+			throw new Error(data.error || 'Ошибка API')
+		}
+
+		return data
+	} catch (error) {
+		console.error('❌ API Error:', error)
+		throw error
+	}
+}
+
+
 
 	// методы авторизации
 	async registerStep1(email) {

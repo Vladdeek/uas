@@ -86,7 +86,7 @@ const Input = ({
 					type={type}
 					placeholder={placeholder}
 					className={`${
-						isAuth ? 'text-2xl opacity-50' : 'text-xl'
+						isAuth ? 'text-2xl text-gray-600' : 'text-xl'
 					}  font-normal  outline-none`}
 					value={value}
 					onChange={onChange}
@@ -117,39 +117,51 @@ const DateInput = ({ onChange }) => {
 		'Декабрь',
 	]
 
-	const [dayStr, setDayStr] = useState('')
+	const [day, setDay] = useState(1)
 	const [month, setMonth] = useState(0)
 	const [yearStr, setYearStr] = useState('')
 
-	// Автоматически преобразуем строки в числа, если это возможно
-	useEffect(() => {
-		const day = parseInt(dayStr)
-		const year = parseInt(yearStr)
+	const [daysInMonth, setDaysInMonth] = useState([])
 
+	useEffect(() => {
+		const year = parseInt(yearStr) || 2000 // если год не задан, по умолчанию 2000
+		const days = new Date(year, month + 1, 0).getDate() // последний день месяца
+
+		const newDays = Array.from({ length: days }, (_, i) => i + 1)
+		setDaysInMonth(newDays)
+
+		if (day > days) setDay(1)
+	}, [month, yearStr])
+
+	useEffect(() => {
+		const year = parseInt(yearStr)
 		onChange?.({
-			day: !isNaN(day) ? day : null,
+			day,
 			month,
 			year: !isNaN(year) ? year : null,
 		})
-	}, [dayStr, month, yearStr])
+	}, [day, month, yearStr])
 
 	return (
 		<div className='flex flex-col'>
 			<p className='ml-3 text-lg'>Дата рождения</p>
 			<div className='flex justify-between text-xl w-full h-15 p-2 gap-3'>
-				<input
-					placeholder='дд'
-					maxLength={2}
-					type='text'
-					value={dayStr}
-					onChange={e => setDayStr(e.target.value.replace(/\D/g, ''))} // только цифры
-					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-2 border-gray-300 w-full'
-				/>
+				<select
+					value={day}
+					onChange={e => setDay(Number(e.target.value))}
+					className='text-center text-xl flex-1 text-gray-600 px-1 py-2 outline-none border-b-2 border-gray-300'
+				>
+					{daysInMonth.map(d => (
+						<option key={d} value={d}>
+							{String(d).padStart(2, '0')}
+						</option>
+					))}
+				</select>
 
 				<select
 					value={month}
 					onChange={e => setMonth(Number(e.target.value))}
-					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-2 border-gray-300'
+					className='text-center text-xl flex-1 text-gray-600 px-1 py-2 outline-none border-b-2 border-gray-300'
 				>
 					{months.map((name, index) => (
 						<option key={index} value={index}>
@@ -163,13 +175,15 @@ const DateInput = ({ onChange }) => {
 					maxLength={4}
 					type='text'
 					value={yearStr}
-					onChange={e => setYearStr(e.target.value.replace(/\D/g, ''))} // только цифры
-					className='text-center text-xl flex-1 px-1 py-2 outline-none border-b-2 border-gray-300 w-full'
+					onChange={e => setYearStr(e.target.value.replace(/\D/g, ''))}
+					className='text-center text-xl flex-1 text-gray-600 px-1 py-2 outline-none border-b-2 border-gray-300 w-full'
 				/>
 			</div>
 		</div>
 	)
 }
+
+export default DateInput
 
 const SelectInput = ({ placeholder, optionsMass, onChange }) => {
 	const [value, setValue] = useState(optionsMass[0])
@@ -197,9 +211,9 @@ const SelectInput = ({ placeholder, optionsMass, onChange }) => {
 }
 const CheckBox = ({ placeholder, onChange, disabled, checked }) => {
 	return (
-		<label className='checkbox-container'>
+		<label className='checkbox-container '>
 			<input
-				className='custom-checkbox'
+				className='custom-checkbox '
 				checked={checked}
 				type='checkbox'
 				onChange={onChange}
@@ -237,7 +251,7 @@ const Submit = ({ placeholder, disable, onClick, isAuth }) => {
 	return (
 		<input
 			className={`text-white font-semibold rounded-2xl  ${
-				disable ? 'bg-gray-300 cursor-default' : 'bg-[#820000] cursor-pointer'
+				disable ? 'bg-gray-400 cursor-default' : 'bg-[#820000] cursor-pointer'
 			}  ${
 				isAuth ? 'my-10 text-2xl p-5 w-full' : 'text-xl p-3 mx-auto w-2/3'
 			} `}
@@ -297,7 +311,7 @@ const Push = ({ code, setCode }) => {
 						value={code[i] || ''}
 						onChange={e => handleChange(e, i)}
 						ref={el => (inputsRef.current[i] = el)}
-						className='h-20 w-15 text-2xl text-center rounded-xl shadow-xs border border-[#00000010] outline-none focus:border-[#820000] focus:shadow-sm focus:shadow-[#99000050]'
+						className='h-20 w-15 text-2xl text-center rounded-xl shadow-xs border border-gray-400 outline-none focus:border-[#820000] focus:shadow-sm focus:shadow-[#99000050]'
 					/>
 				))}
 		</div>

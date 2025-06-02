@@ -15,7 +15,6 @@ import Profile from './chapters/Profile'
 import Applications from './chapters/Applications'
 import Report from './chapters/Report'
 import Constructor from './chapters/Constructor'
-import Structure from './chapters/Structure.jsx'
 import New from './New'
 
 //  API / Утилиты
