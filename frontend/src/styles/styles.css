@@ -1,0 +1,543 @@
+@import 'tailwindcss';
+
+/* ===== CUSTOM SCROLLBARS ===== */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #c1c1c1;
+	border-radius: 4px;
+	transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #a1a1a1;
+}
+
+::-webkit-scrollbar-corner {
+	background: #f1f1f1;
+}
+
+/* Firefox */
+html {
+	scrollbar-width: thin;
+	scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* Smooth scrolling */
+html {
+	scroll-behavior: smooth;
+}
+
+/* ===== HIDDEN SCROLLBAR ===== */
+/* Скрывает скроллбар, но сохраняет возможность прокрутки */
+.hide-scrollbar {
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+	display: none; /* Chrome, Safari, Opera */
+}
+
+/* ===== LAYOUT STABILITY ===== */
+/* Предотвращаем мигание при переходах между страницами */
+main {
+	min-height: 100vh;
+	will-change: auto;
+}
+
+/* Стабильность сайдбара */
+aside {
+	position: fixed !important;
+	will-change: auto;
+}
+
+/* Плавные переходы для Outlet */
+.page-transition {
+	animation: fadeIn 0.15s ease-in-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* Disable hover scaling effects globally */
+.no-hover-scale {
+	transition: all 0.2s ease !important;
+}
+
+.no-hover-scale:hover {
+	transform: none !important;
+}
+
+/* Улучшенные переходы без масштабирования */
+.smooth-transition {
+	transition: box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
+}
+
+/* Анимации появления элементов */
+@keyframes fade-in-up {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fade-in-up {
+	animation: fade-in-up 0.5s ease-out forwards;
+}
+
+/* Улучшенные стили для таблиц */
+.table-row-hover {
+	transition: background-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.table-row-hover:hover {
+	background-color: #f9fafb !important;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+body {
+	background-color: #efefef;
+}
+/* Черный в красный */
+.red-icon {
+	filter: invert(21%) sepia(100%) saturate(7445%) hue-rotate(356deg)
+		brightness(93%) contrast(120%);
+}
+
+/* Анимация сзади регистрации */
+.square {
+	position: relative;
+	margin: 0 10px;
+	width: 575px;
+	height: 575px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.square span:nth-child(1) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 90%;
+	height: 90%;
+	background-color: #820000;
+	border-radius: 31% 45% 74% 35% / 38% 56% 51% 87%;
+	transition: 0.5s;
+	animation: anim1 20s linear infinite;
+	filter: brightness(1.25);
+}
+
+.square span:nth-child(2) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	margin: 2.5%;
+	background-color: #820000;
+	border-radius: 25% 51% 73% 36% / 42% 59% 64% 83%;
+	transition: 0.5s;
+	animation: anim2 12s linear infinite;
+}
+
+.square span:nth-child(3) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 95%;
+	height: 95%;
+	border: 3px solid #820000;
+	border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+	transition: 0.5s;
+	animation: anim3 8s linear infinite;
+	filter: brightness(2);
+}
+
+@keyframes anim1 {
+	0% {
+		transform: rotate(0deg);
+		border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+	}
+
+	50% {
+		transform: rotate(180deg);
+		border-radius: 70% 74% 49% 40% / 21% 56% 58% 79%;
+	}
+
+	100% {
+		transform: rotate(360deg);
+		border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+	}
+}
+
+@keyframes anim2 {
+	0% {
+		transform: rotate(360deg);
+		border-radius: 31% 45% 74% 35% / 38% 56% 51% 87%;
+	}
+	50% {
+		transform: rotate(180deg);
+		border-radius: 70% 48% 59% 67% / 20% 22% 49% 61%;
+	}
+	100% {
+		transform: rotate(0deg);
+		border-radius: 31% 45% 74% 35% / 38% 56% 51% 87%;
+	}
+}
+
+@keyframes anim3 {
+	0% {
+		transform: rotate(0deg);
+		border-radius: 25% 51% 73% 36% / 42% 59% 64% 83%;
+	}
+	50% {
+		transform: rotate(180deg);
+		border-radius: 64% 21% 49% 29% / 63% 35% 66% 62%;
+	}
+	100% {
+		transform: rotate(360deg);
+		border-radius: 25% 51% 73% 36% / 42% 59% 64% 83%;
+	}
+}
+
+/* Лоадер */
+@-webkit-keyframes honeycomb {
+	0%,
+	20%,
+	80%,
+	100% {
+		opacity: 0;
+		-webkit-transform: scale(0);
+		transform: scale(0);
+	}
+
+	30%,
+	70% {
+		opacity: 1;
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+}
+
+@keyframes honeycomb {
+	0%,
+	20%,
+	80%,
+	100% {
+		opacity: 0;
+		-webkit-transform: scale(0);
+		transform: scale(0);
+	}
+
+	30%,
+	70% {
+		opacity: 1;
+		-webkit-transform: scale(1);
+		transform: scale(1);
+	}
+}
+
+.honeycomb {
+	--honeycomb-color: #770002;
+	--honeycomb-shadow: #77000240;
+	height: 60px;
+	position: relative;
+	width: 80px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.honeycomb div {
+	-webkit-animation: honeycomb 2.1s infinite backwards;
+	animation: honeycomb 2.1s infinite backwards;
+	background: var(--honeycomb-color);
+	height: 12px;
+	margin-top: 6px;
+	position: absolute;
+	width: 24px;
+	border-radius: 1px;
+	box-shadow: 0 0 10px var(--honeycomb-shadow);
+}
+
+.honeycomb div:after,
+.honeycomb div:before {
+	content: '';
+	border-left: 12px solid transparent;
+	border-right: 12px solid transparent;
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+.honeycomb div:after {
+	top: -6px;
+	border-bottom: 7px solid var(--honeycomb-color);
+}
+
+.honeycomb div:before {
+	bottom: -6px;
+	border-top: 7px solid var(--honeycomb-color);
+}
+
+.honeycomb div:nth-child(1) {
+	-webkit-animation-delay: 0s;
+	animation-delay: 0s;
+	left: -14px;
+	top: 0;
+}
+
+.honeycomb div:nth-child(2) {
+	-webkit-animation-delay: 0.1s;
+	animation-delay: 0.1s;
+	left: 0px;
+	top: 22px;
+}
+
+.honeycomb div:nth-child(3) {
+	-webkit-animation-delay: 0.2s;
+	animation-delay: 0.2s;
+	left: 28px;
+	top: 22px;
+}
+
+.honeycomb div:nth-child(4) {
+	-webkit-animation-delay: 0.3s;
+	animation-delay: 0.3s;
+	left: 42px;
+	top: 0;
+}
+
+.honeycomb div:nth-child(5) {
+	-webkit-animation-delay: 0.4s;
+	animation-delay: 0.4s;
+	left: 28px;
+	top: -22px;
+}
+
+.honeycomb div:nth-child(6) {
+	-webkit-animation-delay: 0.5s;
+	animation-delay: 0.5s;
+	left: 0px;
+	top: -22px;
+}
+
+.honeycomb div:nth-child(7) {
+	-webkit-animation-delay: 0.6s;
+	animation-delay: 0.6s;
+	left: 14px;
+	top: 0;
+}
+
+/* чекбокс */
+.checkbox-container {
+	display: inline-block;
+	position: relative;
+	padding-left: 35px;
+	margin-bottom: 12px;
+	cursor: pointer;
+	font-size: 16px;
+	user-select: none;
+}
+
+.custom-checkbox {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	height: 0;
+	width: 0;
+}
+
+.checkmark {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 25px;
+	width: 25px;
+	background-color: #eee;
+	border-radius: 4px;
+	transition: background-color 0.3s;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.checkmark:after {
+	content: '';
+	position: absolute;
+	display: none;
+	left: 10px;
+	top: 7px;
+	width: 5px;
+	height: 10px;
+	border: solid white;
+	border-width: 0 3px 3px 0;
+	transform: rotate(45deg);
+}
+
+.custom-checkbox:checked ~ .checkmark {
+	background-color: #c10f1a;
+	box-shadow: 0 3px 7px #c10f1a25;
+}
+
+.custom-checkbox:checked ~ .checkmark:after {
+	display: block;
+}
+
+@keyframes checkAnim {
+	0% {
+		height: 0;
+	}
+
+	100% {
+		height: 10px;
+	}
+}
+
+.custom-checkbox:checked ~ .checkmark:after {
+	animation: checkAnim 0.2s forwards;
+}
+
+/* Toggle Btn */
+/* From Uiverse.io by cbolson */
+.switch {
+	--_switch-bg-clr: #c10f1a;
+	--_switch-padding: 4px; /* padding around button*/
+	--_slider-bg-clr: #820000; /* slider color unchecked */
+	--_slider-bg-clr-on: #820000; /* slider color checked */
+	--_slider-txt-clr: #ffffff;
+	--_label-padding: 1rem 2rem; /* padding around the labels -  this gives the switch it's global width and height */
+	--_switch-easing: cubic-bezier(
+		0.47,
+		1.64,
+		0.41,
+		0.8
+	); /* easing on toggle switch */
+	color: white;
+	width: fit-content;
+	display: flex;
+	justify-content: center;
+	position: relative;
+	border-radius: 9999px;
+	cursor: pointer;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	position: relative;
+	isolation: isolate;
+}
+
+.switch input[type='checkbox'] {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+.switch > span {
+	display: grid;
+	place-content: center;
+	transition: opacity 300ms ease-in-out 150ms;
+	padding: var(--_label-padding);
+}
+.switch::before,
+.switch::after {
+	content: '';
+	position: absolute;
+	border-radius: inherit;
+	transition: inset 150ms ease-in-out;
+}
+/* switch slider */
+.switch::before {
+	background-color: var(--_slider-bg-clr);
+	inset: var(--_switch-padding) 50% var(--_switch-padding)
+		var(--_switch-padding);
+	transition: inset 500ms var(--_switch-easing),
+		background-color 500ms ease-in-out;
+	z-index: -1;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.3);
+}
+/* switch bg color */
+.switch::after {
+	background-color: var(--_switch-bg-clr);
+	inset: 0;
+	z-index: -2;
+}
+/* switch hover & focus */
+.switch:focus-within::after {
+	inset: -0.25rem;
+}
+.switch:has(input:checked):hover > span:first-of-type,
+.switch:has(input:not(:checked)):hover > span:last-of-type {
+	opacity: 1;
+	transition-delay: 0ms;
+	transition-duration: 100ms;
+}
+/* switch hover */
+.switch:has(input:checked):hover::before {
+	inset: var(--_switch-padding) var(--_switch-padding) var(--_switch-padding)
+		45%;
+}
+.switch:has(input:not(:checked)):hover::before {
+	inset: var(--_switch-padding) 45% var(--_switch-padding)
+		var(--_switch-padding);
+}
+/* checked - move slider to right */
+.switch:has(input:checked)::before {
+	background-color: var(--_slider-bg-clr-on);
+	inset: var(--_switch-padding) var(--_switch-padding) var(--_switch-padding)
+		50%;
+}
+/* checked - set opacity */
+.switch > span:last-of-type,
+.switch > input:checked + span:first-of-type {
+	opacity: 0.75;
+}
+.switch > input:checked ~ span:last-of-type {
+	opacity: 1;
+}
+
+/* Line clamp utilities */
+.line-clamp-1 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+}

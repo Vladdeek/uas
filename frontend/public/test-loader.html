@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Honeycomb Лоадера</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .test-container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin: 2rem;
+        }
+
+        h1 {
+            color: #770002;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .loader-section {
+            margin: 3rem 0;
+            padding: 2rem;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .loader-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .background-variants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .bg-variant {
+            padding: 2rem;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+        }
+
+        .bg-white { background: white; }
+        .bg-gray { background: #f5f5f5; }
+        .bg-dark { background: #333; }
+        .bg-blue { background: #e3f2fd; }
+        .bg-red { background: #ffebee; }
+
+        .variant-label {
+            margin-bottom: 1rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* ОРИГИНАЛЬНЫЙ HONEYCOMB ЛОАДЕР */
+        @-webkit-keyframes honeycomb {
+            0%,
+            20%,
+            80%,
+            100% {
+                opacity: 0;
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            30%,
+            70% {
+                opacity: 1;
+                -webkit-transform: scale(1);
+                transform: scale(1);
+            }
+        }
+
+        @keyframes honeycomb {
+            0%,
+            20%,
+            80%,
+            100% {
+                opacity: 0;
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            30%,
+            70% {
+                opacity: 1;
+                -webkit-transform: scale(1);
+                transform: scale(1);
+            }
+        }
+
+        .honeycomb {
+            --honeycomb-color: #770002;
+            --honeycomb-shadow: #77000240;
+            height: 60px;
+            position: relative;
+            width: 80px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .honeycomb div {
+            -webkit-animation: honeycomb 2.1s infinite backwards;
+            animation: honeycomb 2.1s infinite backwards;
+            background: var(--honeycomb-color);
+            height: 12px;
+            margin-top: 6px;
+            position: absolute;
+            width: 24px;
+            border-radius: 1px;
+            box-shadow: 0 0 10px var(--honeycomb-shadow);
+        }
+
+        .honeycomb div:after,
+        .honeycomb div:before {
+            content: '';
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+
+        .honeycomb div:after {
+            top: -6px;
+            border-bottom: 7px solid var(--honeycomb-color);
+        }
+
+        .honeycomb div:before {
+            bottom: -6px;
+            border-top: 7px solid var(--honeycomb-color);
+        }
+
+        .honeycomb div:nth-child(1) {
+            -webkit-animation-delay: 0s;
+            animation-delay: 0s;
+            left: -14px;
+            top: 0;
+        }
+
+        .honeycomb div:nth-child(2) {
+            -webkit-animation-delay: 0.1s;
+            animation-delay: 0.1s;
+            left: 0px;
+            top: 22px;
+        }
+
+        .honeycomb div:nth-child(3) {
+            -webkit-animation-delay: 0.2s;
+            animation-delay: 0.2s;
+            left: 28px;
+            top: 22px;
+        }
+
+        .honeycomb div:nth-child(4) {
+            -webkit-animation-delay: 0.3s;
+            animation-delay: 0.3s;
+            left: 42px;
+            top: 0;
+        }
+
+        .honeycomb div:nth-child(5) {
+            -webkit-animation-delay: 0.4s;
+            animation-delay: 0.4s;
+            left: 28px;
+            top: -22px;
+        }
+
+        .honeycomb div:nth-child(6) {
+            -webkit-animation-delay: 0.5s;
+            animation-delay: 0.5s;
+            left: 0px;
+            top: -22px;
+        }
+
+        .honeycomb div:nth-child(7) {
+            -webkit-animation-delay: 0.6s;
+            animation-delay: 0.6s;
+            left: 14px;
+            top: 0;
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            border-left: 4px solid #2196f3;
+        }
+
+        .browser-info {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🍯 Тест Honeycomb Лоадера</h1>
+        
+        <div class="loader-section">
+            <div class="loader-title">Основной лоадер</div>
+            <div class="honeycomb">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="loader-section">
+            <div class="loader-title">Тест на разных фонах</div>
+            <div class="background-variants">
+                <div class="bg-variant bg-white">
+                    <div class="variant-label">Белый фон</div>
+                    <div class="honeycomb">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+
+                <div class="bg-variant bg-gray">
+                    <div class="variant-label">Серый фон</div>
+                    <div class="honeycomb">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+
+                <div class="bg-variant bg-dark">
+                    <div class="variant-label" style="color: white;">Темный фон</div>
+                    <div class="honeycomb">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+
+                <div class="bg-variant bg-blue">
+                    <div class="variant-label">Голубой фон</div>
+                    <div class="honeycomb">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+
+                <div class="bg-variant bg-red">
+                    <div class="variant-label">Красноватый фон</div>
+                    <div class="honeycomb">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>Инструкция:</strong><br>
+            1. Внимательно смотрите на лоадеры на разных фонах<br>
+            2. Ищите белые полосы или артефакты<br>
+            3. Проверьте в разных браузерах (Chrome, Firefox, Safari, Edge)<br>
+            4. Обратите внимание на псевдоэлементы (треугольные части шестиугольников)
+            
+            <div class="browser-info">
+                Ваш браузер: <span id="browser-info"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Показать информацию о браузере
+        document.getElementById('browser-info').textContent = navigator.userAgent;
+        
+        // Логирование для отладки
+        console.log('Honeycomb loader test page loaded');
+        console.log('User Agent:', navigator.userAgent);
+        console.log('Screen resolution:', screen.width + 'x' + screen.height);
+        console.log('Device pixel ratio:', window.devicePixelRatio);
+    </script>
+</body>
+</html>
